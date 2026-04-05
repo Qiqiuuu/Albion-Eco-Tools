@@ -1,6 +1,4 @@
-use leptos::prelude::{ElementChild};
-use leptos::*;
-use leptos::prelude::{ClassAttribute, Get, OnAttribute, ReadSignal, Set, WriteSignal};
+use leptos::prelude::*;
 use crate::data::topbar::ActiveTab;
 
 #[component]
@@ -8,23 +6,42 @@ pub fn Topbar(
     active_tab: ReadSignal<ActiveTab>,
     set_active_tab: WriteSignal<ActiveTab>
 ) -> impl IntoView {
+
+    let on_fetch = move |_| {
+        todo!()
+    };
+
     view! {
         <div class="topbar">
-            <button
-                class=move || if active_tab.get() == ActiveTab::Cooking { "tab active" } else { "tab" }
-                on:click=move |_| set_active_tab.set(ActiveTab::Cooking)
-            >
-                "COOKING"
-            </button>
+            <div class="topbar-logo">"ALBION " <span>"ECON"</span></div>
+            <div class="tabs">
+                <div
+                    class="tab"
+                    class:active=move || active_tab.get() == ActiveTab::Cooking
+                    on:click=move |_| set_active_tab.set(ActiveTab::Cooking)
+                    >
+                    "Cooking"
+                </div>
+                <div
+                    class="tab"
+                    class:active=move || active_tab.get() == ActiveTab::Farming
+                    on:click=move |_| set_active_tab.set(ActiveTab::Farming)
+                >
+                    "Farming"
+                </div>
+                <div class="tab dis">"Gathering"</div>
+            </div>
 
-            <button
-                class=move || if active_tab.get() == ActiveTab::Farming { "tab active" } else { "tab" }
-                on:click=move |_| set_active_tab.set(ActiveTab::Farming)
-            >
-                "FARMING"
-            </button>
+            <div class="topbar-actions">
+                <span class="fetch-status" id="fetchStatus">"—"</span>
 
-            <button class="tab dis">"GATHERING"</button>
+                <button
+                    class="btn-fetch"
+                    on:click=on_fetch
+                >
+                    "↻ Fetch Prices"
+                </button>
+            </div>
         </div>
     }
 }

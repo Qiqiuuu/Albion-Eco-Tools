@@ -1,14 +1,21 @@
+use wasm_bindgen::JsValue;
 use std::collections::HashMap;
-use leptos::prelude::{event_target_value, signal, CollectView, ElementChild, OnAttribute, PropAttribute, StyleAttribute, Update};
+use leptos::prelude::{event_target_value, signal, CollectView, Effect, ElementChild, OnAttribute, PropAttribute, StyleAttribute, Update};
 use leptos::component;
 use leptos::prelude::{ClassAttribute, Get, Set};
+use leptos::reactive::spawn_local;
+use wasm_bindgen::prelude::wasm_bindgen;
 use crate::data::sidebar::{CategoryOfSpecializations, Specialization};
 use crate::IntoView;
 use crate::view;
 use crate::WriteSignal;
 use crate::ReadSignal;
 
-// ... (importy bez zmian)
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"], js_name = invoke)]
+    async fn invoke_rust(cmd: &str, args: JsValue) -> JsValue;
+}
 
 #[component]
 pub fn Sidebar(
@@ -19,93 +26,115 @@ pub fn Sidebar(
 ) -> impl IntoView {
     let (categories, _set_categories) = signal(CategoryOfSpecializations::default_list());
 
+    Effect::new(move |_| {
+        spawn_local(async move {
+            let res = invoke_rust("load_data", JsValue::NULL).await;
+            if let Some(json) = res.as_string() {
+                if let Ok(data) = serde_json::from_str::<HashMap<String, u32>>(&json) {
+                    set_specializations.set(data);
+                }
+            }
+        });
+    });
+
+
+    Effect::new(move |_| {
+        let current = specializations.get();
+        if !current.is_empty() {
+            let json = serde_json::to_string(&current).unwrap();
+            let args = serde_wasm_bindgen::to_value(&serde_json::json!({ "json": json })).unwrap();
+
+            spawn_local(async move {
+                invoke_rust("save_data", args).await;
+            });
+        }
+    });
+
+
     view! {
         <div class="sidebar">
-            <div class="sb-logo">
-                <div class="sb-logo-main">"Albion"<br/>"Profit"</div>
-                <div class="sb-logo-sub">"COOKING ENGINE"</div>
-            </div>
+            {move || {
+                categories.get().into_iter().map(|category| {
+                    let label = category.label().to_string();
+                    let label_clone = label.clone();
 
-            <div class="sb-scroll">
-                {move || {
-                    categories.get().into_iter().map(|category| {
-                        let label = category.label().to_string();
-                        let label_clone = label.clone();
+                    let is_open = move || active_category.get() == label_clone;
+                    let is_open_section = is_open().clone();
+                    let is_open_items = is_open().clone();
 
-                        let is_open = move || active_category.get() == label_clone;
-                        let is_open_for_arrow = is_open.clone();
-                        let is_open_for_tree = is_open.clone();
 
-                        let specs = category.get_specs().clone();
+                    let specs = category.get_specs().clone();
 
-                        view! {
-                            <div class="sb-sec">
-                                <button
-                                    class="sb-sec-hd"
-                                    on:click={
-                                        let label_click = label.clone();
-                                        move |_| {
-                                            let current = active_category.get();
-
-                                            if current == label_click {
-                                                set_active_category.set(String::new());
-                                            } else {
-                                                set_active_category.set(label_click.clone());
-                                            }
+                    view! {
+                        <div class="sidebar-section">
+                            <div
+                                class="sidebar-cat"
+                                class:open=is_open_section
+                                on:click={
+                                    let label_click = label.clone();
+                                    move |_| {
+                                        let current = active_category.get();
+                                        if current == label_click {
+                                            set_active_category.set(String::new());
+                                        } else {
+                                            set_active_category.set(label_click.clone());
                                         }
                                     }
-                                >
-                                    <span class="sb-sec-label">{label.clone()}</span>
-                                    <span class=move || if is_open_for_arrow() { "sb-arrow open" } else { "sb-arrow" }>
-                                        "▶"
-                                    </span>
-                                </button>
-
-                                {move || is_open_for_tree().then(|| view! {
-                                    <div class="spec-tree">
-                                        {specs.clone().into_iter().map(|spec| {
-                                            let name = spec.get_name();
-                                            let level = move || specializations.get().get(name).cloned().unwrap_or(0);
-                                            let curr_class = move || if level() > 0 { "spec-row active" } else { "spec-row" };
-
-                                            view! {
-                                                <div class=curr_class>
-                                                    <span class="spec-nm">{name}</span>
-                                                    <div class="spec-bar-w">
-                                                        <div
-                                                            class="spec-bar-f"
-                                                            style=move || format!("width: {}%", level().min(100))
-                                                        ></div>
-                                                    </div>
-                                                    <input
-                                                        class="spec-inp"
-                                                        type="number"
-                                                        prop:value=level
-                                                        on:input=move |ev| {
-                                                            let val = event_target_value(&ev).parse::<u32>().unwrap_or(0);
-                                                            set_specializations.update(|map| {
-                                                                map.insert(name.to_string(), val);
-                                                            });
-                                                        }
-                                                    />
-                                                </div>
-                                            }
-                                        }).collect_view()}
-                                    </div>
-                                })}
+                                }
+                            >
+                                {label.clone()}
+                                <span class="sidebar-cat-arrow">
+                                    {move || if is_open() { "▼" } else { "►" }}
+                                </span>
                             </div>
-                        }
-                    }).collect_view()
-                }}
-            </div>
 
-            <div class="sb-city">
-                <div class="sb-city-lbl">"Market City"</div>
-                <select class="sb-city-sel">
-                    <option value="Caerleon">"Caerleon"</option>
-                    <option value="Bridgewatch">"Bridgewatch"</option>
-                </select>
-            </div>
+                            <div class="sidebar-items" class:open=is_open_items>
+                                {specs.into_iter().map(|spec| {
+                                    let name = spec.get_name().to_string();
+                                    let name_item = name.clone();
+                                    let name_dec = name.clone();
+                                    let name_inc = name.clone();
+
+                                    let level = move || specializations.get().get(&name).cloned().unwrap_or(0);
+
+                                    view! {
+                                        <div class="sidebar-item">
+                                            <span class="sidebar-item-name">{name_item}</span>
+                                            <div class="spec-level">
+                                                <button
+                                                    class="spec-lvl-btn"
+                                                    on:click={let n = name_dec; move |e| {
+                                                        e.stop_propagation();
+                                                        set_specializations.update(|map| {
+                                                            let curr = map.get(&n).cloned().unwrap_or(0);
+                                                            map.insert(n.clone(), curr.saturating_sub(1));
+                                                        });
+                                                    }}
+                                                >
+                                                    "−"
+                                                </button>
+                                                <span class="spec-lvl-val">{move || level()}</span>
+                                                <button
+                                                    class="spec-lvl-btn"
+                                                    on:click={let n = name_inc; move |e| {
+                                                        e.stop_propagation();
+                                                        set_specializations.update(|map| {
+                                                            let curr = map.get(&n).cloned().unwrap_or(0);
+                                                            if curr < 100 { map.insert(n.clone(), curr + 1); }
+                                                        });
+                                                    }}
+                                                >
+                                                    "+"
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                }).collect_view()}
+                            </div>
+                        </div>
+                    }
+                }).collect_view()
+            }}
         </div>
     }
 }

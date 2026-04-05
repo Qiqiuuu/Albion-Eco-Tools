@@ -1,4 +1,4 @@
 
 pub mod sidebar;
 pub mod topbar;
-pub mod workspace;
+pub mod cooking_content;
