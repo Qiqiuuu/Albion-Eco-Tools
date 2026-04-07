@@ -87,7 +87,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .hidden {
   display: none !important;
 }
-}
+
 .btn-fetch{background:var(--gold);color:#0d0f14;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;transition:background 0.2s;}
 .btn-fetch:hover{background:var(--gold2);}
 .btn-fetch.loading{opacity:0.7;cursor:not-allowed;}
@@ -445,4 +445,61 @@ custom-select-container {
 
 .sauce-badge.is-profit .sauce-verdict {
   color: var(--green);
+}
+
+.modal-selected-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.modal-row label {
+  font-size: 11px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Rajdhani', sans-serif;
+  min-width: 64px;
+}
+
+.modal-small-input {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  width: 80px;
+}
+
+.modal-small-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.btn-back {
+  background: transparent;
+  border: none;
+  color: var(--text3);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.15s;
+}
+
+.btn-back:hover {
+  color: var(--text);
 }

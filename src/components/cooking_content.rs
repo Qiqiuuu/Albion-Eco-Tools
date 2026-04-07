@@ -1,9 +1,11 @@
 pub mod config;
 pub mod enchant;
+pub mod tracking;
 
 use leptos::prelude::*;
 use crate::components::cooking_content::config::Config;
 use crate::components::cooking_content::enchant::Enchant;
+use crate::components::cooking_content::tracking::Tracking;
 
 #[component]
 pub fn CookingContent(
@@ -38,6 +40,10 @@ pub fn CookingContent(
                 set_is_city_open=set_is_city_open
             />
             <Enchant/>
+            <div class="panels">
+                <Tracking/>
+            </div>
+
 
         </div>
     }
