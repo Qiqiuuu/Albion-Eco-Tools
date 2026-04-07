@@ -1,6 +1,6 @@
 use wasm_bindgen::JsValue;
 use std::collections::HashMap;
-use leptos::prelude::{event_target_value, signal, CollectView, Effect, ElementChild, OnAttribute, PropAttribute, StyleAttribute, Update};
+use leptos::prelude::{signal, CollectView, Effect, ElementChild, OnAttribute,Update};
 use leptos::component;
 use leptos::prelude::{ClassAttribute, Get, Set};
 use leptos::reactive::spawn_local;

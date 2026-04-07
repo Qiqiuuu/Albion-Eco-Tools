@@ -20,37 +20,73 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .tab:hover{color:var(--text);}
 .tab.active{color:var(--gold);border-bottom-color:var(--gold);}
 .topbar-actions{display:flex;align-items:center;gap:10px;margin-left:auto;}
-.city-select, .avg-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+/* Kontener dla obu selectów */
+.custom-select {
+  position: relative;
+  width: 140px; /* Możesz dostosować szerokość */
+  user-select: none;
+}
 
-  background-color: var(--bg3);
+/* Wygląd przycisku (Trigger) */
+.select-trigger {
+  background: var(--bg3);
   border: 1px solid var(--border2);
   color: var(--text);
-  padding: 6px 30px 6px 12px;
+  padding: 6px 12px;
   border-radius: 6px;
   font-size: 12px;
   cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-family: 'Inter', sans-serif;
-  outline: none;
-
-
-
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c9a84c' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
+  transition: all 0.2s;
 }
 
-
-.city-select option, .avg-select option {
-  background-color: var(--bg2);
-  color: var(--text);
-  padding: 10px;
-}
-
-.city-select:focus, .avg-select:focus {
+.select-trigger:hover {
   border-color: var(--gold);
+  background: var(--bg4);
+}
+
+/* Menu rozwijane */
+.select-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  z-index: 9999;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+
+/* Pojedyncza opcja */
+.select-option {
+  padding: 8px 12px;
+  color: var(--text2);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.select-option:hover {
+  background: var(--gold-dim);
+  color: var(--gold);
+}
+
+/* Strzałka wewnątrz triggera */
+.arrow {
+  font-size: 9px;
+  color: var(--gold);
+  margin-left: 8px;
+}
+
+/* Klasa ukrywająca (używana przez Leptos) */
+.hidden {
+  display: none !important;
+}
 }
 .btn-fetch{background:var(--gold);color:#0d0f14;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;transition:background 0.2s;}
 .btn-fetch:hover{background:var(--gold2);}
@@ -250,4 +286,163 @@ custom-select-container {
 
 .hidden {
   display: none !important;
+}
+
+/* ── ENCHANT BAR wrapper ─────────────────────────────── */
+.enchant-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 20px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  min-height: 56px;
+}
+
+/* ── sekcja (CRAFT VS BUY / INGREDIENTS / MARKET) ───── */
+.enchant-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 16px 0 0;
+}
+
+.enchant-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+/* ── pionowy separator ────────────────────────────────── */
+.enchant-sep {
+  width: 1px;
+  background: var(--border2);
+  align-self: stretch;
+  margin: 0 16px;
+  flex-shrink: 0;
+}
+
+/* ── CRAFT VS BUY: rząd badge'y ──────────────────────── */
+.sauce-results-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.sauce-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  min-width: 62px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+/* domyślnie = "Buy" — czerwonawy odcień */
+.sauce-badge .sauce-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text2);
+  text-transform: uppercase;
+}
+
+.sauce-badge .sauce-diff {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--red);
+}
+
+/* gdy diff > 0 = opłaca się craftować */
+.sauce-badge.is-profit {
+  border-color: rgba(76, 175, 122, 0.35);
+  background: rgba(76, 175, 122, 0.07);
+}
+
+.sauce-badge.is-profit .sauce-diff {
+  color: var(--green);
+}
+
+.sauce-badge.is-profit .sauce-name {
+  color: var(--green);
+}
+
+/* ── inputs: label + pole ─────────────────────────────── */
+.input-with-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.input-with-tag label {
+  font-size: 11px;
+  color: var(--text3);
+  white-space: nowrap;
+  min-width: 76px;
+  font-family: 'Inter', sans-serif;
+}
+
+.input-with-tag input[type="number"] {
+  width: 82px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 4px 7px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
+}
+
+.input-with-tag input[type="number"]::-webkit-outer-spin-button,
+.input-with-tag input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.input-with-tag input[type="number"]:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+/* ── MARKET: poziomy rząd inputów ─────────────────────── */
+.market-inputs-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.market-inputs-row .input-with-tag label {
+  min-width: 44px;
+}
+
+.market-inputs-row .market-input {
+  width: 72px;
+}
+
+.sauce-verdict {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--red);
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+.sauce-badge.is-profit .sauce-verdict {
+  color: var(--green);
 }
