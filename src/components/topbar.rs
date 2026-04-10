@@ -8,7 +8,7 @@ pub fn Topbar(
 ) -> impl IntoView {
 
     let on_fetch = move |_| {
-        todo!()
+        todo!("SFSDF")
     };
 
     view! {

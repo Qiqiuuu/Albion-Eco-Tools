@@ -2,7 +2,7 @@ use leptos::prelude::*;
 use leptos::{component, view, IntoView};
 use leptos::prelude::ClassAttribute;
 use strum::IntoEnumIterator;
-use crate::data::cooking::fish_sauce::{FishSauce};
+use crate::data::cooking_seed::fish_sauce::{FishSauce};
 
 
 

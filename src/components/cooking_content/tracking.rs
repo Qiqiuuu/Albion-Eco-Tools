@@ -1,7 +1,7 @@
 use leptos::prelude::{event_target_value, CollectView, ElementChild, For, Get, GlobalAttributes, Memo, OnAttribute, PropAttribute, RwSignal, Set, Show, Update};
 use leptos::{component, view, IntoView};
 use leptos::prelude::ClassAttribute;
-use crate::data::cooking::food::{AlbionItem, ApiTier, DishCategory, FoodCategory, FoodName};
+use crate::data::cooking_seed::food::{AlbionItem, ApiTier, DishCategory, FoodCategory, FoodName};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct TrackedFood {
