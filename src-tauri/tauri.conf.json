@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "apc",
+  "productName": "Albion Economy Tools",
   "version": "0.1.0",
-  "identifier": "com.qiqiu.apc",
+  "identifier": "Albion Economy Tools",
   "build": {
     "beforeDevCommand": "trunk serve",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "apc",
+        "title": "Albion Economy Tools",
         "width": 800,
         "height": 600
       }
