@@ -1,20 +1,33 @@
-mod user;
-mod data;
 
-use std::sync::Mutex;
-use crate::user::{AppState, UserData,get_player_data,update_level};
-use crate::data::{load_data, save_data};
+pub mod commands;
+
+mod loader;
+mod state;
+pub mod calculations;
+
+use aet_shared::models::user::UserData;
+use crate::commands::items::{fetch_items_by_category, refresh_prices};
+use crate::commands::user::{get_player_specs, update_player_specs};
+use crate::loader::{load_item_registry, load_prices};
+use crate::state::AppState;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let state = AppState {
+        items: load_item_registry(),
+        prices: std::sync::RwLock::new(load_prices()),
+        user: std::sync::Mutex::new(UserData::default()),
+    };
+
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .manage(AppState(Mutex::new(UserData::default())))
+        .manage(state)
         .invoke_handler(tauri::generate_handler![
-            get_player_data,
-            update_level,
-            save_data,
-            load_data])
+            get_player_specs,
+            update_player_specs,
+            fetch_items_by_category,
+            refresh_prices
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
