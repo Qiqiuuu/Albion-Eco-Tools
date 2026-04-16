@@ -1,33 +1,41 @@
-use std::fs;
-use chrono::{DateTime, Utc};
+
 use tauri::State;
-use aet_shared::models::items::{Item, ItemEntity, ItemRegistry};
-use aet_shared::models::prices::ItemPrice;
-use crate::loader::load_prices;
+use aet_shared::models::calculations::{CraftingContext, CraftingLocation, CraftingResult};
+use aet_shared::models::items::{ItemRegistry};
+use aet_shared::models::prices::{ItemPrice, PriceMap};
+use crate::calculations::crafting_calculations;
 use crate::state::AppState;
 
-#[tauri::command]
-pub fn fetch_items_by_category(state: State<AppState>,category: Item) -> (Option<DateTime<Utc>>, Vec<ItemEntity>) {
-    let filtered = state.items.items.values()
-        .filter(|entity| entity.category == category)
-        .cloned()
-        .collect();
-    (state.items.last_price_update,filtered)
-}
+
 
 #[tauri::command]
-pub fn refresh_prices(state: State<AppState>) -> ItemPrice {
-    let fresh = load_prices();
-    let mut prices = state.prices.write().unwrap();
-    *prices = fresh.clone();
-    fresh
-}
-
-#[tauri::command]
-pub fn fetch_all_prices(state: State<AppState>) -> ItemPrice {
+pub fn fetch_all_prices(state: State<AppState>) -> PriceMap {
     state.prices.read().unwrap().clone()
 }
 
+#[tauri::command]
 pub fn fetch_all_items(state: State<AppState>) -> ItemRegistry {
     state.items.clone()
+}
+
+#[tauri::command]
+pub fn calculate_crafting(state: State<'_, AppState>, unique_name: &str, location: CraftingLocation,use_focus: bool,usage_fee: u32,is_premium: bool) -> Option<CraftingResult> {
+    let prices = state.prices.read().unwrap();
+    let user = state.user.lock().unwrap();
+    let item_registry = &state.items;
+
+    let item_entity = item_registry.items.get(&unique_name.to_string())?;
+
+    let context = CraftingContext {
+        item: item_entity,
+        prices: &prices,
+        user_specs: &user.specializations,
+        location,
+        usage_fee,
+        use_focus,
+        is_premium,
+    };
+
+    crafting_calculations(&context)
+
 }

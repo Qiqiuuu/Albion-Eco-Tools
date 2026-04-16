@@ -1,128 +1,83 @@
-use wasm_bindgen::JsValue;
-use std::collections::HashMap;
-use leptos::prelude::{signal, CollectView, Effect, ElementChild, OnAttribute,Update};
+
+use leptos::prelude::{CollectView, ElementChild, OnAttribute, ReadSignal, StyleAttribute, Update, WriteSignal};
 use leptos::component;
-use leptos::prelude::{ClassAttribute, Get, Set};
+use leptos::context::use_context;
+use leptos::prelude::{ClassAttribute, Get};
 use leptos::reactive::spawn_local;
-use wasm_bindgen::prelude::wasm_bindgen;
-use aet_shared::models::specializations::{CategoryOfSpecializations, Specialization};
+use aet_shared::models::user::UserData;
+use crate::api::user::{send_specs_update};
 use crate::IntoView;
 use crate::view;
-use crate::WriteSignal;
-use crate::ReadSignal;
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"], js_name = invoke)]
-    async fn invoke_rust(cmd: &str, args: JsValue) -> JsValue;
-}
 
 #[component]
-pub fn Sidebar(
-    active_category: ReadSignal<String>,
-    set_active_category: WriteSignal<String>,
-    specializations: ReadSignal<HashMap<String, u32>>,
-    set_specializations: WriteSignal<HashMap<String, u32>>,
-) -> impl IntoView {
-    let (categories, _set_categories) = signal(CategoryOfSpecializations::default_list());
-
-    Effect::new(move |_| {
-        spawn_local(async move {
-            let res = invoke_rust("load_data", JsValue::NULL).await;
-            if let Some(json) = res.as_string() {
-                if let Ok(data) = serde_json::from_str::<HashMap<String, u32>>(&json) {
-                    set_specializations.set(data);
-                }
-            }
-        });
-    });
-
-
-    Effect::new(move |_| {
-        let current = specializations.get();
-        if !current.is_empty() {
-            let json = serde_json::to_string(&current).unwrap();
-            let args = serde_wasm_bindgen::to_value(&serde_json::json!({ "json": json })).unwrap();
-
-            spawn_local(async move {
-                invoke_rust("save_data", args).await;
-            });
-        }
-    });
-
+pub fn Sidebar() -> impl IntoView {
+    let data = use_context::<ReadSignal<UserData>>().expect("No user data set");
+    let set_data = use_context::<WriteSignal<UserData>>().expect("No user data set");
 
     view! {
         <div class="sidebar">
             {move || {
-                categories.get().into_iter().map(|category| {
-                    let label = category.label().to_string();
-                    let label_clone = label.clone();
-
-                    let is_open = move || active_category.get() == label_clone;
-                    let is_open_section = is_open().clone();
-                    let is_open_items = is_open().clone();
+                data.get().specializations.into_iter().map(|category| {
+                    let cat_id = category.id;
+                    let label = category.get_label();
+                    let specs = category.get_specs();
 
 
-                    let specs = category.get_specs().clone();
+                    let is_open = move || data.get().active_category == cat_id;
 
                     view! {
                         <div class="sidebar-section">
                             <div
                                 class="sidebar-cat"
-                                class:open=is_open_section
-                                on:click={
-                                    let label_click = label.clone();
-                                    move |_| {
-                                        let current = active_category.get();
-                                        if current == label_click {
-                                            set_active_category.set(String::new());
-                                        } else {
-                                            set_active_category.set(label_click.clone());
-                                        }
-                                    }
+                                class:open=is_open
+                                on:click=move |_| {
+                                    set_data.update(|u| u.active_category = cat_id);
                                 }
                             >
-                                {label.clone()}
+                                {label}
                                 <span class="sidebar-cat-arrow">
                                     {move || if is_open() { "▼" } else { "►" }}
                                 </span>
                             </div>
 
-                            <div class="sidebar-items" class:open=is_open_items>
+                            <div class="sidebar-items"
+                                 style:display=move || if is_open() { "block" } else { "none" }>
                                 {specs.into_iter().map(|spec| {
-                                    let name = spec.get_name().to_string();
-                                    let name_item = name.clone();
-                                    let name_dec = name.clone();
-                                    let name_inc = name.clone();
-
-                                    let level = move || specializations.get().get(&name).cloned().unwrap_or(0);
+                                    let spec_id = spec.id;
+                                    let spec_name = spec.get_name();
+                                    let spec_level = spec.get_level();
 
                                     view! {
                                         <div class="sidebar-item">
-                                            <span class="sidebar-item-name">{name_item}</span>
+                                            <span class="sidebar-item-name">{spec_name}</span>
                                             <div class="spec-level">
                                                 <button
                                                     class="spec-lvl-btn"
-                                                    on:click={let n = name_dec; move |e| {
+                                                    on:click=move |e| {
                                                         e.stop_propagation();
-                                                        set_specializations.update(|map| {
-                                                            let curr = map.get(&n).cloned().unwrap_or(0);
-                                                            map.insert(n.clone(), curr.saturating_sub(1));
+                                                        let new_lvl = spec_level.saturating_sub(1);
+                                                        set_data.update(|d| d.set_spec_level(spec_id, new_lvl));
+                                                        spawn_local(async move {
+                                                            let _ = send_specs_update(spec_id, new_lvl).await;
                                                         });
-                                                    }}
+                                                    }
                                                 >
                                                     "−"
                                                 </button>
-                                                <span class="spec-lvl-val">{move || level()}</span>
+
+                                                <span class="spec-lvl-val">{move || spec_level}</span>
+
                                                 <button
                                                     class="spec-lvl-btn"
-                                                    on:click={let n = name_inc; move |e| {
+                                                    on:click=move |e| {
                                                         e.stop_propagation();
-                                                        set_specializations.update(|map| {
-                                                            let curr = map.get(&n).cloned().unwrap_or(0);
-                                                            if curr < 100 { map.insert(n.clone(), curr + 1); }
+                                                        let new_lvl = (spec_level+ 1).min(100);
+                                                        set_data.update(|d| d.set_spec_level(spec_id, new_lvl));
+                                                        spawn_local(async move {
+                                                            let _ = send_specs_update(spec_id, new_lvl).await;
                                                         });
-                                                    }}
+                                                    }
                                                 >
                                                     "+"
                                                 </button>
@@ -138,5 +93,3 @@ pub fn Sidebar(
         </div>
     }
 }
-
-

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use crate::models::specializations::{SpecKind, Specializations};
+use crate::models::specializations::{SpecId};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(tag = "type", content = "sub_type", rename_all = "SCREAMING_SNAKE_CASE")]
@@ -23,6 +23,8 @@ pub enum Item {
     Tome,
     Trophy,
 }
+
+
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -142,7 +144,7 @@ pub struct ItemEntity {
     pub recipes: Option<Vec<Recipe>>,
     pub station: Option<Station>,
     pub base_focus: Option<u32>,
-    pub specialization: Option<SpecKind>,
+    pub specialization: Option<SpecId>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -179,6 +181,8 @@ impl ItemEntity {
             station: None,
         }
     }
+
+
     pub fn with_category(mut self, category: Item) -> Self {
         self.category = category;
         self
@@ -194,7 +198,7 @@ impl ItemEntity {
         self
     }
 
-    pub fn with_specialization(mut self, spec: SpecKind) -> Self {
+    pub fn with_specialization(mut self, spec: SpecId) -> Self {
         self.specialization = Some(spec);
         self
     }

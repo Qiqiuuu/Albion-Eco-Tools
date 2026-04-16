@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumIter};
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize,EnumIter, Display)]
 pub enum ActiveTab {
     Cooking,
     Farming,

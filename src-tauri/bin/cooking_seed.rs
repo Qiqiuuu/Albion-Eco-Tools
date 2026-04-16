@@ -8,8 +8,8 @@ use aet_shared::models::items::{
     Quality, Recipe, Station, Tier, Consumable, Crafting, Product
 };
 use aet_shared::models::prices::CityPrice;
-use aet_shared::models::specializations::{SpecKind, Specializations};
-use aet_shared::models::specializations::chief::ChefKind;
+use aet_shared::models::specializations::{SpecId};
+use aet_shared::models::user::UserData;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct FocusCost {
@@ -31,7 +31,7 @@ fn food_enchants(
     value: u32,
     output_count: u8,
     base_ingredients: Vec<Ingredient>,
-    spec: SpecKind,
+    spec: SpecId,
     station: Station,
     sauce_counts: [u32; 3],
     focus_costs: [u32; 4],
@@ -190,7 +190,7 @@ fn main() -> anyhow::Result<()> {
             .with_category(Item::Material)
             .with_recipe(Recipe::new(1, vec![ing(milk, 1)]))
             .with_station(Station::Mill)
-            .with_specialization(SpecKind::Chef(ChefKind::IngredientChef)));
+            .with_specialization(SpecId::IngredientChef));
     }
 
     // --- Fish Sauce ---
@@ -203,156 +203,156 @@ fn main() -> anyhow::Result<()> {
             .with_category(Item::Material)
             .with_recipe(Recipe::new(1, vec![ing("T1_FISHCHOPS", fish), ing("T1_SEAWEED", seaweed)]))
             .with_station(Station::Cook)
-            .with_specialization(SpecKind::Chef(ChefKind::IngredientChef)));
+            .with_specialization(SpecId::IngredientChef));
     }
 
     // --- Soups ---
     items.extend(food_enchants("T1_MEAL_SOUP", "Carrot Soup", Tier::T1, 64, 10,
                                vec![ing("T1_CARROT", 16)],
-                               SpecKind::Chef(ChefKind::SoupChef), Station::Cook, [10, 10, 10], [56,78,123,256]));
+                               SpecId::SoupChef, Station::Cook, [10, 10, 10], [56,78,123,256]));
     items.extend(food_enchants("T3_MEAL_SOUP", "Wheat Soup", Tier::T3, 128, 10,
                                vec![ing("T3_WHEAT", 48)],
-                               SpecKind::Chef(ChefKind::SoupChef), Station::Cook, [30, 30, 30], [168,235,368,769]));
+                               SpecId::SoupChef, Station::Cook, [30, 30, 30], [168,235,368,769]));
     items.extend(food_enchants("T5_MEAL_SOUP", "Cabbage Soup", Tier::T5, 576, 10,
                                vec![ing("T5_CABBAGE", 144)],
-                               SpecKind::Chef(ChefKind::SoupChef), Station::Cook, [90, 90, 90], [504,704,1105,2306]));
+                               SpecId::SoupChef, Station::Cook, [90, 90, 90], [504,704,1105,2306]));
 
     // Omelettes
     items.extend(food_enchants("T3_MEAL_OMELETTE", "Chicken Omelette", Tier::T3, 56, 10,
                                vec![ing("T3_EGG", 2), ing("T3_MEAT", 8), ing("T3_WHEAT", 4)],
-                               SpecKind::Chef(ChefKind::OmeletteChef), Station::Cook, [10, 10, 10], [52,74,118,252]));
+                               SpecId::OmeletteChef, Station::Cook, [10, 10, 10], [52,74,118,252]));
     items.extend(food_enchants("T5_MEAL_OMELETTE", "Goose Omelette", Tier::T5, 168, 10,
                                vec![ing("T5_EGG", 6), ing("T5_MEAT", 24), ing("T5_CABBAGE", 12)],
-                               SpecKind::Chef(ChefKind::OmeletteChef), Station::Cook, [30, 30, 30], [155,222,355,755]));
+                               SpecId::OmeletteChef, Station::Cook, [30, 30, 30], [155,222,355,755]));
     items.extend(food_enchants("T7_MEAL_OMELETTE", "Pork Omelette", Tier::T7, 504, 10,
                                vec![ing("T5_EGG", 18), ing("T7_MEAT", 72), ing("T7_CORN", 36)],
-                               SpecKind::Chef(ChefKind::OmeletteChef), Station::Cook, [90, 90, 90], [464,665,1065,2266]));
+                               SpecId::OmeletteChef, Station::Cook, [90, 90, 90], [464,665,1065,2266]));
 
     items.extend(food_enchants("T3_MEAL_OMELETTE_FISH", "Lowriver Crab Omelette", Tier::T3, 90, 1,
                                vec![ing("T3_FISH_FRESHWATER_STEPPE_RARE", 1), ing("T3_EGG", 1), ing("T3_COMFREY", 1)],
-                               SpecKind::Chef(ChefKind::OmeletteChef), Station::Cook, [3, 3, 3], [77,144,278,678]));
+                               SpecId::OmeletteChef, Station::Cook, [3, 3, 3], [77,144,278,678]));
     items.extend(food_enchants("T5_MEAL_OMELETTE_FISH", "Drybrook Crab Omelette", Tier::T5, 260, 1,
                                vec![ing("T5_FISH_FRESHWATER_STEPPE_RARE", 1), ing("T5_EGG", 2), ing("T5_CABBAGE", 2), ing("T5_TEASEL", 2)],
-                               SpecKind::Chef(ChefKind::OmeletteChef), Station::Cook, [9, 9, 9], [225,425,825,2026]));
+                               SpecId::OmeletteChef, Station::Cook, [9, 9, 9], [225,425,825,2026]));
     items.extend(food_enchants("T7_MEAL_OMELETTE_FISH", "Dusthole Crab Omelette", Tier::T7, 750, 1,
                                vec![ing("T7_FISH_FRESHWATER_STEPPE_RARE", 1), ing("T7_CORN", 6), ing("T7_MULLEIN", 6), ing("T7_MEAT", 6)],
-                               SpecKind::Chef(ChefKind::OmeletteChef), Station::Cook, [27, 27, 27], [672,1272,2473,6076]));
+                               SpecId::OmeletteChef, Station::Cook, [27, 27, 27], [672,1272,2473,6076]));
 
     items.extend(food_enchants("T3_MEAL_OMELETTE_AVALON", "Avalonian Chicken Omelette", Tier::T3, 120, 10,
                                vec![ing("T3_EGG", 2), ing("T3_MEAT", 8), ing("T4_MILK", 4), ing("QUESTITEM_TOKEN_AVALON", 10)],
-                               SpecKind::Chef(ChefKind::OmeletteChef), Station::Cook, [10, 10, 10], [52,74,118,252]));
+                               SpecId::OmeletteChef, Station::Cook, [10, 10, 10], [52,74,118,252]));
     items.extend(food_enchants("T5_MEAL_OMELETTE_AVALON", "Avalonian Goose Omelette", Tier::T5, 360, 10,
                                vec![ing("T5_EGG", 6), ing("T5_MEAT", 24), ing("T6_MILK", 12), ing("QUESTITEM_TOKEN_AVALON", 30)],
-                               SpecKind::Chef(ChefKind::OmeletteChef), Station::Cook, [30, 30, 30], [155,222,355,755]));
+                               SpecId::OmeletteChef, Station::Cook, [30, 30, 30], [155,222,355,755]));
     items.extend(food_enchants("T7_MEAL_OMELETTE_AVALON", "Avalonian Pork Omelette", Tier::T7, 1080, 10,
                                vec![ing("T5_EGG", 18), ing("T7_MEAT", 72), ing("T8_MILK", 36), ing("QUESTITEM_TOKEN_AVALON", 90)],
-                               SpecKind::Chef(ChefKind::OmeletteChef), Station::Cook, [90, 90, 90], [464,665,1065,2266]));
+                               SpecId::OmeletteChef, Station::Cook, [90, 90, 90], [464,665,1065,2266]));
 
     // --- Stews ---
     items.extend(food_enchants("T4_MEAL_STEW", "Goat Stew", Tier::T4, 64, 10,
                                vec![ing("T4_MEAT", 8), ing("T4_TURNIP", 4), ing("T4_BREAD", 4)],
-                               SpecKind::Chef(ChefKind::StewChef), Station::Cook, [10, 10, 10], [61,84,128,262]));
+                               SpecId::StewChef, Station::Cook, [10, 10, 10], [61,84,128,262]));
     items.extend(food_enchants("T6_MEAL_STEW", "Mutton Stew", Tier::T6, 192, 10,
                                vec![ing("T6_MEAT", 24), ing("T6_POTATO", 12), ing("T4_BREAD", 12)],
-                               SpecKind::Chef(ChefKind::StewChef), Station::Cook, [30, 30, 30], [184,251,384,785]));
+                               SpecId::StewChef, Station::Cook, [30, 30, 30], [184,251,384,785]));
     items.extend(food_enchants("T8_MEAL_STEW", "Beef Stew", Tier::T8, 576, 10,
                                vec![ing("T8_MEAT", 72), ing("T8_PUMPKIN", 36), ing("T4_BREAD", 36)],
-                               SpecKind::Chef(ChefKind::StewChef), Station::Cook, [90, 90, 90], [551,752,1152,2353]));
+                               SpecId::StewChef, Station::Cook, [90, 90, 90], [551,752,1152,2353]));
 
     items.extend(food_enchants("T4_MEAL_STEW_FISH", "Greenriver Eel Stew", Tier::T4, 90, 1,
                                vec![ing("T3_FISH_FRESHWATER_FOREST_RARE", 1), ing("T4_TURNIP", 1), ing("T4_BURDOCK", 1)],
-                               SpecKind::Chef(ChefKind::StewChef), Station::Cook, [3, 3, 3], [77,144,278,678]));
+                               SpecId::StewChef, Station::Cook, [3, 3, 3], [77,144,278,678]));
     items.extend(food_enchants("T6_MEAL_STEW_FISH", "Redspring Eel Stew", Tier::T6, 192, 1,
                                vec![ing("T5_FISH_FRESHWATER_FOREST_RARE", 1), ing("T6_POTATO", 2), ing("T6_FOXGLOVE", 2), ing("T6_MILK", 2)],
-                               SpecKind::Chef(ChefKind::StewChef), Station::Cook, [9, 9, 9], [225,425,825,2026]));
+                               SpecId::StewChef, Station::Cook, [9, 9, 9], [225,425,825,2026]));
     items.extend(food_enchants("T8_MEAL_STEW_FISH", "Deadwater Eel Stew", Tier::T8, 750, 1,
                                vec![ing("T7_FISH_FRESHWATER_FOREST_RARE", 1), ing("T8_PUMPKIN", 6), ing("T8_YARROW", 6), ing("T8_MILK", 6)],
-                               SpecKind::Chef(ChefKind::StewChef), Station::Cook, [27, 27, 27], [652,1253,2454,6056]));
+                               SpecId::StewChef, Station::Cook, [27, 27, 27], [652,1253,2454,6056]));
 
     items.extend(food_enchants("T4_MEAL_STEW_AVALON", "Avalonian Beef Stew", Tier::T4, 128, 10,
                                vec![ing("T4_MEAT", 8), ing("T4_TURNIP", 4), ing("T1_CARROT", 4), ing("QUESTITEM_TOKEN_AVALON", 10)],
-                               SpecKind::Chef(ChefKind::StewChef), Station::Cook, [10, 10, 10], [58,81,125,259]));
+                               SpecId::StewChef, Station::Cook, [10, 10, 10], [58,81,125,259]));
     items.extend(food_enchants("T6_MEAL_STEW_AVALON", "Avalonian Mutton Stew", Tier::T6, 384, 10,
                                vec![ing("T6_MEAT", 24), ing("T6_POTATO", 12), ing("T5_CABBAGE", 12), ing("QUESTITEM_TOKEN_AVALON", 30)],
-                               SpecKind::Chef(ChefKind::StewChef), Station::Cook, [30, 30, 30], [176,243,376,777]));
+                               SpecId::StewChef, Station::Cook, [30, 30, 30], [176,243,376,777]));
     items.extend(food_enchants("T8_MEAL_STEW_AVALON", "Avalonian Beef Stew", Tier::T8, 1152, 10,
                                vec![ing("T8_MEAT", 72), ing("T8_PUMPKIN", 36), ing("T7_CORN", 36), ing("QUESTITEM_TOKEN_AVALON", 90)],
-                               SpecKind::Chef(ChefKind::StewChef), Station::Cook, [90, 90, 90], [528,728,1128,2329]));
+                               SpecId::StewChef, Station::Cook, [90, 90, 90], [528,728,1128,2329]));
 
     // --- Pies ---
     items.extend(food_enchants("T3_MEAL_PIE", "Chicken Pie", Tier::T3, 56, 10,
                                vec![ing("T3_MEAT", 8), ing("T3_WHEAT", 2), ing("T3_FLOUR", 4)],
-                               SpecKind::Chef(ChefKind::PieChef), Station::Cook, [10, 10, 10], [53,75,120,253]));
+                               SpecId::PieChef, Station::Cook, [10, 10, 10], [53,75,120,253]));
     items.extend(food_enchants("T5_MEAL_PIE", "Goose Pie", Tier::T5, 192, 10,
                                vec![ing("T5_MEAT", 24), ing("T5_CABBAGE", 6), ing("T3_FLOUR", 12), ing("T4_MILK", 6)],
-                               SpecKind::Chef(ChefKind::PieChef), Station::Cook, [30, 30, 30], [180,246,380,780]));
+                               SpecId::PieChef, Station::Cook, [30, 30, 30], [180,246,380,780]));
     items.extend(food_enchants("T7_MEAL_PIE", "Pork Pie", Tier::T7, 576, 10,
                                vec![ing("T7_MEAT", 72), ing("T7_CORN", 18), ing("T3_FLOUR", 18), ing("T6_MILK", 18)],
-                               SpecKind::Chef(ChefKind::PieChef), Station::Cook, [90, 90, 90], [540,739,1140,2341]));
+                               SpecId::PieChef, Station::Cook, [90, 90, 90], [540,739,1140,2341]));
 
     items.extend(food_enchants("T3_MEAL_PIE_FISH", "Upland Coldeye Pie", Tier::T3, 90, 1,
                                vec![ing("T3_FISH_FRESHWATER_MOUNTAIN_RARE", 1), ing("T3_EGG", 1), ing("T3_FLOUR", 1)],
-                               SpecKind::Chef(ChefKind::PieChef), Station::Cook, [3, 3, 3], [81,147,281,681]));
+                               SpecId::PieChef, Station::Cook, [3, 3, 3], [81,147,281,681]));
     items.extend(food_enchants("T5_MEAL_PIE_FISH", "Mountain Blindeye Pie", Tier::T5, 260, 1,
                                vec![ing("T5_FISH_FRESHWATER_MOUNTAIN_RARE", 1), ing("T5_EGG", 2), ing("T5_CABBAGE", 2), ing("T5_TEASEL", 2)],
-                               SpecKind::Chef(ChefKind::PieChef), Station::Cook, [9, 9, 9], [225,425,825,2026]));
+                               SpecId::PieChef, Station::Cook, [9, 9, 9], [225,425,825,2026]));
     items.extend(food_enchants("T7_MEAL_PIE_FISH", "Frostpeak Deadeye Pie", Tier::T7, 750, 1,
                                vec![ing("T7_FISH_FRESHWATER_MOUNTAIN_RARE", 1), ing("T7_MEAT", 6), ing("T7_CORN", 6), ing("T7_MULLEIN", 6)],
-                               SpecKind::Chef(ChefKind::PieChef), Station::Cook, [27, 27, 27], [672,1272,2473,6076]));
+                               SpecId::PieChef, Station::Cook, [27, 27, 27], [672,1272,2473,6076]));
 
     // --- Roasts ---
     items.extend(food_enchants("T3_MEAL_ROAST", "Roast Chicken", Tier::T3, 64, 10,
                                vec![ing("T3_MEAT", 8), ing("T2_BEAN", 4), ing("T4_MILK", 4)],
-                               SpecKind::Chef(ChefKind::RoastChef), Station::Cook, [10, 10, 10], [58,81,125,259]));
+                               SpecId::RoastChef, Station::Cook, [10, 10, 10], [58,81,125,259]));
     items.extend(food_enchants("T5_MEAL_ROAST", "Roast Goose", Tier::T5, 192, 10,
                                vec![ing("T5_MEAT", 24), ing("T5_CABBAGE", 12), ing("T6_MILK", 12)],
-                               SpecKind::Chef(ChefKind::RoastChef), Station::Cook, [30, 30, 30], [176,243,376,777]));
+                               SpecId::RoastChef, Station::Cook, [30, 30, 30], [176,243,376,777]));
     items.extend(food_enchants("T7_MEAL_ROAST", "Roast Pork", Tier::T7, 576, 10,
                                vec![ing("T7_MEAT", 72), ing("T7_CORN", 36), ing("T8_MILK", 36)],
-                               SpecKind::Chef(ChefKind::RoastChef), Station::Cook, [90, 90, 90], [528,728,1128,2329]));
+                               SpecId::RoastChef, Station::Cook, [90, 90, 90], [528,728,1128,2329]));
 
     items.extend(food_enchants("T3_MEAL_ROAST_FISH", "Roasted Whitefog Snapper", Tier::T3, 90, 1,
                                vec![ing("T3_FISH_FRESHWATER_AVALON_RARE", 1), ing("T3_COMFREY", 1), ing("T4_MILK", 1)],
-                               SpecKind::Chef(ChefKind::RoastChef), Station::Cook, [3, 3, 3], [77,144,278,678]));
+                               SpecId::RoastChef, Station::Cook, [3, 3, 3], [77,144,278,678]));
     items.extend(food_enchants("T5_MEAL_ROAST_FISH", "Roasted Clearhaze Snapper", Tier::T5, 260, 1,
                                vec![ing("T5_FISH_FRESHWATER_AVALON_RARE", 1), ing("T5_MEAT", 2), ing("T5_CABBAGE", 2), ing("T5_TEASEL", 2), ing("T6_MILK", 2)],
-                               SpecKind::Chef(ChefKind::RoastChef), Station::Cook, [9, 9, 9], [225,425,825,2026]));
+                               SpecId::RoastChef, Station::Cook, [9, 9, 9], [225,425,825,2026]));
     items.extend(food_enchants("T7_MEAL_ROAST_FISH", "Roasted Puremist Snapper", Tier::T7, 750, 1,
                                vec![ing("T7_FISH_FRESHWATER_AVALON_RARE", 1), ing("T7_CORN", 6), ing("T7_MULLEIN", 6), ing("T8_MILK", 6)],
-                               SpecKind::Chef(ChefKind::RoastChef), Station::Cook, [27, 27, 27], [652,1253,2454,6056]));
+                               SpecId::RoastChef, Station::Cook, [27, 27, 27], [652,1253,2454,6056]));
 
 
     // --- SANDWICHES  ---
 
     items.extend(food_enchants("T4_MEAL_SANDWICH", "Goat Sandwich", Tier::T4, 56, 10,
                                vec![ing("T4_MEAT", 8), ing("T4_BREAD", 4), ing("T4_BUTTER", 2)],
-                               SpecKind::Chef(ChefKind::SandwichChef), Station::Cook, [10, 10, 10], [55,77,122,255]));
+                               SpecId::SandwichChef, Station::Cook, [10, 10, 10], [55,77,122,255]));
     items.extend(food_enchants("T6_MEAL_SANDWICH", "Mutton Sandwich", Tier::T6, 168, 10,
                                vec![ing("T6_MEAT", 24), ing("T4_BREAD", 12), ing("T6_BUTTER", 6)],
-                               SpecKind::Chef(ChefKind::SandwichChef), Station::Cook, [30, 30, 30], [165,231,365,765]));
+                               SpecId::SandwichChef, Station::Cook, [30, 30, 30], [165,231,365,765]));
     items.extend(food_enchants("T8_MEAL_SANDWICH", "Beef Sandwich", Tier::T8, 504, 10,
                                vec![ing("T8_MEAT", 72), ing("T4_BREAD", 36), ing("T8_BUTTER", 18)],
-                               SpecKind::Chef(ChefKind::SandwichChef), Station::Cook, [90, 90, 90], [494,694,1094,2295]));
+                               SpecId::SandwichChef, Station::Cook, [90, 90, 90], [494,694,1094,2295]));
 
     items.extend(food_enchants("T4_MEAL_SANDWICH_FISH", "Stonestream Lurcher Sandwich", Tier::T4, 90, 1,
                                vec![ing("T3_FISH_FRESHWATER_HIGHLANDS_RARE", 1), ing("T4_TURNIP", 1), ing("T4_BUTTER", 1)],
-                               SpecKind::Chef(ChefKind::SandwichChef), Station::Cook, [3, 3, 3], [81,147,281,681]));
+                               SpecId::SandwichChef, Station::Cook, [3, 3, 3], [81,147,281,681]));
     items.extend(food_enchants("T6_MEAL_SANDWICH_FISH", "Rushwater Lurcher Sandwich", Tier::T6, 260, 1,
                                vec![ing("T5_FISH_FRESHWATER_HIGHLANDS_RARE", 1), ing("T6_POTATO", 2), ing("T6_FOXGLOVE", 2), ing("T6_BUTTER", 2)],
-                               SpecKind::Chef(ChefKind::SandwichChef), Station::Cook, [9, 9, 9], [231,432,832,2033]));
+                               SpecId::SandwichChef, Station::Cook, [9, 9, 9], [231,432,832,2033]));
     items.extend(food_enchants("T8_MEAL_SANDWICH_FISH", "Thunderfall Lurcher Sandwich", Tier::T8, 750, 1,
                                vec![ing("T7_FISH_FRESHWATER_HIGHLANDS_RARE", 1), ing("T8_PUMPKIN", 6), ing("T8_YARROW", 6), ing("T8_BUTTER", 6)],
-                               SpecKind::Chef(ChefKind::SandwichChef), Station::Cook, [27, 27, 27], [672,1272,2473,6076]));
+                               SpecId::SandwichChef, Station::Cook, [27, 27, 27], [672,1272,2473,6076]));
 
     items.extend(food_enchants("T4_MEAL_SANDWICH_AVALON", "Avalonian Goat Sandwich", Tier::T4, 120, 10,
                                vec![ing("T4_MEAT", 8), ing("T4_BREAD", 4), ing("T4_BUTTER", 2), ing("QUESTITEM_TOKEN_AVALON", 10)],
-                               SpecKind::Chef(ChefKind::SandwichChef), Station::Cook, [10, 10, 10], [55,77,122,255]));
+                               SpecId::SandwichChef, Station::Cook, [10, 10, 10], [55,77,122,255]));
     items.extend(food_enchants("T6_MEAL_SANDWICH_AVALON", "Avalonian Mutton Sandwich", Tier::T6, 360, 10,
                                vec![ing("T6_MEAT", 24), ing("T4_BREAD", 12), ing("T6_BUTTER", 6), ing("QUESTITEM_TOKEN_AVALON", 30)],
-                               SpecKind::Chef(ChefKind::SandwichChef), Station::Cook, [30, 30, 30], [165,231,365,765]));
+                               SpecId::SandwichChef, Station::Cook, [30, 30, 30], [165,231,365,765]));
     items.extend(food_enchants("T8_MEAL_SANDWICH_AVALON", "Avalonian Beef Sandwich", Tier::T8, 1080, 10,
                                vec![ing("T8_MEAT", 72), ing("T4_BREAD", 36), ing("T8_BUTTER", 18), ing("QUESTITEM_TOKEN_AVALON", 90)],
-                               SpecKind::Chef(ChefKind::SandwichChef), Station::Cook, [90, 90, 90], [494,694,1094,2295]));
+                               SpecId::SandwichChef, Station::Cook, [90, 90, 90], [494,694,1094,2295]));
 
 
 
@@ -400,7 +400,7 @@ fn main() -> anyhow::Result<()> {
     println!("Zapisano ceny dla {} przedmiotów do {:?}", price_map.len(), prices_path);
 
 
-    let specs = Specializations::default_list();
+    let specs = UserData::default_spec();
 
     let home = std::env::var("HOME")?;
     let path = PathBuf::from(home)

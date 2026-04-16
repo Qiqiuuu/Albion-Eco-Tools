@@ -3,10 +3,14 @@ use std::fs;
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager, State};
 use aet_shared::models::items::ItemRegistry;
-use aet_shared::models::prices::{ItemPrice};
+use aet_shared::models::prices::{ItemPrice, PriceMap};
 use aet_shared::models::user::UserData;
-use crate::loader;
 use crate::state::AppState;
+
+
+const USER_FILE:   &str = "user";
+const ITEMS_FILE:  &str = "items";
+const PRICES_FILE: &str = "prices";
 
 fn get_config_path(handle: &tauri::AppHandle, json: &str) -> Result<PathBuf, String> {
     handle.path()
@@ -35,24 +39,25 @@ pub fn load_json<T: DeserializeOwned + Default>(handle: &tauri::AppHandle,json: 
         .unwrap_or_default()
 }
 
-
-pub fn load_item_registry() -> ItemRegistry {
-    let data = fs::read_to_string("resources/items.json")
-        .unwrap_or_default();
-    serde_json::from_str(&data).unwrap_or_default()
+pub fn load_user(handle: &AppHandle) -> UserData {
+    load_json(handle, USER_FILE)
 }
 
-pub fn load_prices() -> ItemPrice {
-    let data = fs::read_to_string("resources/prices.json")
-        .unwrap_or_default();
-    serde_json::from_str(&data).unwrap_or_default()
+pub fn load_item_registry(handle: &AppHandle) -> ItemRegistry {
+    load_json(handle, ITEMS_FILE)
 }
 
-pub fn load_player_specs(handle: AppHandle) -> UserData {
-    load_json::<UserData>(&handle, "player_data")
+pub fn load_prices(handle: &AppHandle) -> PriceMap {
+    load_json(handle, PRICES_FILE)
 }
 
-pub fn save_player_specs(handle: AppHandle, state: State<'_, AppState>) -> Result<(), String> {
+
+pub fn save_user(handle: &AppHandle, state: &State<AppState>) -> Result<(), String> {
     let data = state.user.lock().unwrap();
-    save_json(&handle, &*data, "spec")
+    save_json(handle, &*data, USER_FILE)
+}
+
+pub fn save_prices(handle: &AppHandle, state: &State<AppState>) -> Result<(), String> {
+    let data = state.prices.read().unwrap();
+    save_json(handle, &*data, PRICES_FILE)
 }

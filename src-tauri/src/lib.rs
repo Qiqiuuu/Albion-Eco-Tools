@@ -5,28 +5,32 @@ mod loader;
 mod state;
 pub mod calculations;
 
-use aet_shared::models::user::UserData;
-use crate::commands::items::{fetch_items_by_category, refresh_prices};
-use crate::commands::user::{get_player_specs, update_player_specs};
-use crate::loader::{load_item_registry, load_prices};
+use std::sync::{Mutex, RwLock};
+use tauri::Manager;
+use crate::commands::items::{fetch_all_items, fetch_all_prices};
+use crate::commands::user::{get_player_data, update_player_specs};
+use crate::loader::{load_item_registry, load_prices, load_user};
 use crate::state::AppState;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let state = AppState {
-        items: load_item_registry(),
-        prices: std::sync::RwLock::new(load_prices()),
-        user: std::sync::Mutex::new(UserData::default()),
-    };
-
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .manage(state)
+        .setup(|app| {
+            let handle = app.handle();
+            let state = AppState {
+                items:  load_item_registry(handle),
+                prices: RwLock::new(load_prices(handle)),
+                user:   Mutex::new(load_user(handle)),
+            };
+            app.manage(state);
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
-            get_player_specs,
+            get_player_data,
             update_player_specs,
-            fetch_items_by_category,
-            refresh_prices
+            fetch_all_items,
+            fetch_all_prices
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

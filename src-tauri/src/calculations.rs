@@ -1,8 +1,26 @@
 use aet_shared::models::calculations::{CraftingContext, CraftingResult};
-use aet_shared::models::specializations::{find_efficiency, Specializations};
+use aet_shared::models::specializations::{Category, SpecId};
 
 fn is_item_with_no_rr(unique_name: &str) -> bool {
     unique_name.contains("QUESTITEM_TOKEN_AVALON")
+}
+
+fn calculate_total_focus_points(categories: &[Category], target_id: &SpecId) -> u32 {
+    categories.iter()
+        .find(|cat| cat.specs.iter().any(|s| &s.id == target_id))
+        .map(|cat| {
+            let mastery_bonus = cat.mastery_level * 30;
+            let specs_bonus: u32 = cat.specs.iter().map(|s| {
+                if &s.id == target_id {
+                    s.focus_efficiency()
+                } else {
+                    s.passive_efficiency()
+                }
+            }).sum();
+
+            mastery_bonus + specs_bonus
+        })
+        .unwrap_or(0)
 }
 
 pub fn crafting_calculations(context: &CraftingContext) -> Option<CraftingResult> {
@@ -26,10 +44,11 @@ pub fn crafting_calculations(context: &CraftingContext) -> Option<CraftingResult
     }
 
     let rrr = context.location.get_rr(context.use_focus);
+
     let effective_cost = total_ingredients_cost - (returnable_value_cost * rrr);
 
     let station_tax = (context.item.value as f64 / 20.0)
-        * (context.usage_fee / 44.444);
+        * (context.usage_fee as f64 / 44.444);
 
     let actual_cost = effective_cost + station_tax;
 
@@ -47,9 +66,9 @@ pub fn crafting_calculations(context: &CraftingContext) -> Option<CraftingResult
 
 
     let focus_efficiency = if context.use_focus {
-        match (context.item.base_focus, context.item.specialization.as_ref()) {
-            (Some(base_focus), Some(spec_kind)) => {
-                let spec_points = find_efficiency(context.user_specs, spec_kind);
+        match (context.item.base_focus, &context.item.specialization) {
+            (Some(base_focus), Some(spec_id)) => {
+                let spec_points = calculate_total_focus_points(context.user_specs, spec_id);
                 let factor      = 0.5_f64.powf(spec_points as f64 / 10000.0);
                 let focus_cost  = (base_focus as f64 * factor).floor();
                 if focus_cost > 0.0 { net_profit / focus_cost } else { 0.0 }
@@ -71,3 +90,4 @@ pub fn crafting_calculations(context: &CraftingContext) -> Option<CraftingResult
         focus_efficiency,
     })
 }
+

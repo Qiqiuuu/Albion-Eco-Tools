@@ -1,21 +1,16 @@
-use std::collections::HashMap;
-use std::panic::Location;
 use serde::{Deserialize, Serialize};
 use crate::models::items::ItemEntity;
-use crate::models::prices::ItemPrice;
-use crate::models::specializations::Specializations;
-
-
-
+use crate::models::prices::{PriceMap};
+use crate::models::specializations::Category;
 
 pub struct CraftingContext<'a> {
     pub item: &'a ItemEntity,
-    pub prices: &'a HashMap<String, ItemPrice>,
-    pub location: &'a CraftingLocation,
-    pub usage_fee: f64,
+    pub prices: &'a PriceMap,
+    pub user_specs: &'a [Category],
+    pub location: CraftingLocation,
+    pub usage_fee: u32,
     pub use_focus: bool,
     pub is_premium: bool,
-    pub user_specs: &'a [Specializations],
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

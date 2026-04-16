@@ -2,59 +2,80 @@ use leptos::prelude::*;
 use leptos::{component, view, IntoView};
 use leptos::prelude::ClassAttribute;
 use strum::IntoEnumIterator;
+use aet_shared::models::calculations::CraftingLocation;
 use aet_shared::models::cooking::{FishSauce, CHOPPED_FISH, SEAWEED};
-use aet_shared::models::prices::ItemPrices;
-
-
-fn get_price(prices: &ItemPrices, unique_name: &str, city: &str) -> u32 {
-    prices
-        .get(unique_name)
-        .and_then(|c| c.get(city))
-        .map(|p| p.sell_price_min as u32)
-        .unwrap_or(0)
-}
+use aet_shared::models::prices::{PriceMap};
+use aet_shared::models::user::UserData;
+use crate::api::items::calculate_crafting;
 
 
 #[component]
 pub fn Enchant(
-    selected_city: ReadSignal<String>
 ) -> impl IntoView {
 
-    let prices = use_context::<ReadSignal<ItemPrices>>().unwrap();
-
-    let city         = move || selected_city.get();
-    let chopped_fish = move || get_price(&prices.get(), CHOPPED_FISH, &city());
-    let seaweed      = move || get_price(&prices.get(), SEAWEED, &city());
-    let sauce_price  = move |sauce: FishSauce| get_price(&prices.get(), sauce.get_unique_name(), &city());
+    let prices = use_context::<ReadSignal<PriceMap>>().expect("No prices context");
+    let data = use_context::<ReadSignal<UserData>>().expect("No user data context");
 
 
+    let price_of = move |name: &str| {
+        prices.get().get(name).map(|c| c.current).unwrap_or(0)
+    };
     view! {
         <div class="enchant-bar">
-
-
             <div class="enchant-section">
                 <span class="enchant-label">"CRAFT VS BUY"</span>
                 <div class="sauce-results-row">::iter()
                     {FishSauce::iter().map(|sauce| {
-                        let diff = move || {
-                            let craft  = sauce.calculate_craft_cost(chopped_fish, seaweed);
-                            let market = sauce_price(sauce);
-                            market as i32 - craft as i32
-                        };
+                        let sauce_id = sauce.get_unique_name().to_owned();
+                        let sauce_name = sauce.to_string();
+                        let id = sauce_id.clone();
+
+                        let craft_res = LocalResource::new(
+                            move || {
+                                let data = data.get();
+                                let id = id.clone();
+                                async move {
+                                    calculate_crafting(
+                                        &id,
+                                        CraftingLocation::RoyalCity,
+                                        data.use_focus,
+                                        data.silver_fee,
+                                        data.use_premium
+                                    ).await
+                                }
+                            }
+                        );
                         view! {
-                            <div class="sauce-badge" class:is-profit=move || (diff() > 0)>
-                                <span class="sauce-name">{sauce.to_string()}</span>
-                                <span class="sauce-diff">
-                                    {move || {
-                                        let d = diff();
-                                              if d >= 0 { format!("+{:.1}k", d as f64 / 1000.0) }
-                                              else { format!("{:.1}k",   d as f64 / 1000.0) }
-                                    }}
-                                </span>
-                                <span class="sauce-verdict">
-                                    {move || if diff() > 0 { "CRAFT" } else { "BUY" }}
-                                </span>
-                            </div>
+                            <Suspense fallback=move || view! { <div class="sauce-badge">"..."</div> }>
+                                {move || {
+                                    craft_res.get().map(|res_opt| {
+                                        match res_opt {
+                                            Some(res) => {
+                                                let market = price_of(&sauce_id) as f64;
+                                                let diff = market - res.actual_cost;
+                                                let is_profit = diff > 0.0;
+
+                                                view! {
+                                                    <div class="sauce-badge" class:is_profit=is_profit>
+                                                        <span class="sauce-name">{sauce_name.clone()}</span>
+                                                        <span class="sauce-diff">
+                                                            {format!(
+                                                                "{}{}k",
+                                                                if diff > 0.0 { "+" } else { "" },
+                                                                (diff / 1000.0).round()
+                                                            )}
+                                                        </span>
+                                                        <span class="sauce-verdict">
+                                                            {if diff > 0.0 { "CRAFT" } else { "BUY" }}
+                                                        </span>
+                                                    </div>
+                                                }.into_any()
+                                            }
+                                            None => view! {<div class="sauce-badge loading">"..."</div>}.into_any(),
+                                        }
+                                    })
+                                }}
+                            </Suspense>
                         }
                     }).collect_view()}
                 </div>
@@ -67,17 +88,11 @@ pub fn Enchant(
                 <span class="enchant-label">"INGREDIENTS"</span>
                 <div class="input-with-tag">
                     <label>"Chopped Fish"</label>
-                    <input type="number" prop:value=chopped_fish
-                        on:input=move |e| set_chopped_fish_price.set(
-                            event_target_value(&e).parse().unwrap_or(0)
-                        )/>
+                    <div class="price-display">{move || price_of(CHOPPED_FISH)}</div>
                 </div>
                 <div class="input-with-tag">
                     <label>"Seaweed"</label>
-                    <input type="number" prop:value=seaweed
-                        on:input=move |e| set_seaweed_price.set(
-                            event_target_value(&e).parse().unwrap_or(0)
-                        )/>
+                    <div class="price-display">{move || price_of(SEAWEED)}</div>
                 </div>
             </div>
 
@@ -88,21 +103,19 @@ pub fn Enchant(
                 <span class="enchant-label">"MARKET PRICE"</span>
                 <div class="market-inputs-row">
                     {FishSauce::iter().map(|sauce| {
+                        let id = sauce.get_unique_name().to_owned();
+                        let label = sauce.to_string();
                         view! {
                             <div class="input-with-tag">
-                                <label>{sauce.to_string()}</label>
-                                <input class="market-input" type="number"
-                                    prop:value=move || get_price_signal(sauce)
-                                    on:input=move |e| set_price_signal(
-                                        sauce,
-                                        event_target_value(&e).parse().unwrap_or(0)
-                                    )/>
+                                <label>{label}</label>
+                                <div class="price-display">
+                                    {move || price_of(&id)}
+                                </div>
                             </div>
                         }
                     }).collect_view()}
                 </div>
             </div>
-
         </div>
     }
 }

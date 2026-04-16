@@ -39,17 +39,10 @@ dependencies = [
  "aet-shared",
  "chrono",
  "console_error_panic_hook",
- "js-sys",
  "leptos",
- "serde",
- "serde-wasm-bindgen",
  "serde_json",
  "strum",
- "strum_macros",
- "tauri",
  "tauri-sys",
- "wasm-bindgen",
- "wasm-bindgen-futures",
 ]
 
 [[package]]

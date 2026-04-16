@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use strum_macros::{EnumIter, Display};
-use strum::IntoEnumIterator;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, EnumIter,Display)]
 pub enum FishSauce{
