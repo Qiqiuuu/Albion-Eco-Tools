@@ -8,7 +8,7 @@ pub mod calculations;
 use std::sync::{Mutex, RwLock};
 use tauri::Manager;
 use crate::commands::items::{calculate_crafting, fetch_all_items, fetch_all_prices};
-use crate::commands::user::{get_player_data, update_player_mastery, update_player_specs,update_active_tab,update_active_category};
+use crate::commands::user::{get_player_data, update_player_mastery, update_player_specs, update_active_tab, update_active_category, update_silver_fee, update_premium, update_focus, update_city, update_avg};
 use crate::loader::{load_item_registry, load_prices, load_user};
 use crate::state::AppState;
 
@@ -34,7 +34,12 @@ pub fn run() {
             update_active_category,
             fetch_all_items,
             fetch_all_prices,
-            calculate_crafting
+            calculate_crafting,
+            update_focus,
+            update_premium,
+            update_silver_fee,
+            update_city,
+            update_avg
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

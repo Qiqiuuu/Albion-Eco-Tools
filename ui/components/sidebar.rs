@@ -63,16 +63,14 @@ pub fn Sidebar() -> impl IntoView {
                                                 <button
                                                     class="spec-lvl-btn"
                                                     on:click=move |e| {
-    e.stop_propagation();
-    let new_lvl = (spec_level() + 1).min(100);
-    leptos::logging::log!("KLIK + spec_id={:?} new_lvl={}", spec_id, new_lvl);
-    set_data.update(|d| d.set_spec_level(spec_id, new_lvl));
-    spawn_local(async move {
-        leptos::logging::log!("spawn_local START");
-        let result = send_specs_update(spec_id, new_lvl).await;
-        leptos::logging::log!("spawn_local END result={:?}", result);
-    });
-}
+                                                    e.stop_propagation();
+                                                    let new_lvl = (spec_level() + 1).min(100);
+                                                    leptos::logging::log!("KLIK + spec_id={:?} new_lvl={}", spec_id, new_lvl);
+                                                    set_data.update(|d| d.set_spec_level(spec_id, new_lvl));
+                                                    spawn_local(async move {
+                                                        send_specs_update(spec_id, new_lvl).await;
+                                                    });
+                                                }
                                                 >
                                                     "−"
                                                 </button>
@@ -86,7 +84,7 @@ pub fn Sidebar() -> impl IntoView {
                                                         let new_lvl = (spec_level() + 1).min(100);
                                                         set_data.update(|d| d.set_spec_level(spec_id, new_lvl));
                                                         spawn_local(async move {
-                                                            let _ = send_specs_update(spec_id, new_lvl).await;
+                                                            send_specs_update(spec_id, new_lvl).await;
                                                         });
                                                     }
                                                 >
