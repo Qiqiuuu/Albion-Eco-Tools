@@ -9,14 +9,26 @@ pub async fn fetch_player_data() -> UserData {
 
 }
 
+
 pub async fn send_specs_update(spec_id: SpecId, level: u32) {
-    invoke::<()>("update_player_specs", (&spec_id,&level)).await;
+    #[derive(serde::Serialize)]
+    #[serde(rename_all = "camelCase")]
+    struct Args { updated_spec_id: SpecId, level: u32 }
+
+    invoke::<()>("update_player_specs",
+                 &Args { updated_spec_id: spec_id, level }).await;
 }
 
 pub async fn send_active_tab_update(new_tab: ActiveTab) {
-    invoke::<()>("update_active_tab", &new_tab).await;
+    #[derive(serde::Serialize)]
+    #[serde(rename_all = "camelCase")]
+    struct Args { new_active_tab: ActiveTab }
+    invoke::<()>("update_active_tab", &Args { new_active_tab: new_tab }).await;
 }
 
-pub async fn send_active_category_update(new_tab: CategoryId) {
-    invoke::<()>("update_active_category", &new_tab).await;
+pub async fn send_active_category_update(new_category: CategoryId) {
+    #[derive(serde::Serialize)]
+    #[serde(rename_all = "camelCase")]
+    struct Args { new_active_category: CategoryId }
+    invoke::<()>("update_active_category", &Args { new_active_category: new_category }).await;
 }

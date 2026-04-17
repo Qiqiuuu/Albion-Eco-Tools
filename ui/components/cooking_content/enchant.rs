@@ -20,6 +20,26 @@ pub fn Enchant(
     let price_of = move |name: &str| {
         prices.get().get(name).map(|c| c.current).unwrap_or(0)
     };
+
+    let all_results = LocalResource::new(move || {
+        let data = data.get();
+        async move {
+            let mut results = std::collections::HashMap::new();
+            for sauce in FishSauce::iter() {
+                let id = sauce.get_unique_name().to_owned();
+                let res = calculate_crafting(
+                    &id,
+                    CraftingLocation::RoyalCity,
+                    data.use_focus,
+                    data.silver_fee,
+                    data.use_premium
+                ).await;
+                results.insert(id, res);
+            }
+            results
+        }
+    });
+
     view! {
         <div class="enchant-bar">
             <div class="enchant-section">
@@ -30,54 +50,28 @@ pub fn Enchant(
                         let sauce_name = sauce.to_string();
                         let id = sauce_id.clone();
 
-                        let craft_res = LocalResource::new(
-                            move || {
-                                let data = data.get();
-                                let id = id.clone();
-                                async move {
-                                    calculate_crafting(
-                                        &id,
-                                        CraftingLocation::RoyalCity,
-                                        data.use_focus,
-                                        data.silver_fee,
-                                        data.use_premium
-                                    ).await
-                                }
-                            }
-                        );
                         view! {
-                            <Suspense fallback=move || view! { <div class="sauce-badge">"..."</div> }>
-                                {move || {
-                                    craft_res.get().map(|res_opt| {
-                                        match res_opt {
-                                            Some(res) => {
-                                                let market = price_of(&sauce_id) as f64;
-                                                let diff = market - res.actual_cost;
-                                                let is_profit = diff > 0.0;
-
-                                                view! {
-                                                    <div class="sauce-badge" class:is_profit=is_profit>
-                                                        <span class="sauce-name">{sauce_name.clone()}</span>
-                                                        <span class="sauce-diff">
-                                                            {format!(
-                                                                "{}{}k",
-                                                                if diff > 0.0 { "+" } else { "" },
-                                                                (diff / 1000.0).round()
-                                                            )}
-                                                        </span>
-                                                        <span class="sauce-verdict">
-                                                            {if diff > 0.0 { "CRAFT" } else { "BUY" }}
-                                                        </span>
-                                                    </div>
-                                                }.into_any()
-                                            }
-                                            None => view! {<div class="sauce-badge loading">"..."</div>}.into_any(),
+                        <Suspense fallback=move || view! { <div class="sauce-badge">"..."</div> }>
+                            {move || {
+                                all_results.get().map(|results| {
+                                    match results.get(&id) {
+                                        Some(Some(res)) => {
+                                            let market = price_of(&sauce_id) as f64;
+                                            let diff = market - res.actual_cost;
+                                            let is_profit = diff > 0.0;
+                                            view! {
+                                                <div class="sauce-badge" class:is_profit=is_profit>
+                                                    // ...
+                                                </div>
+                                            }.into_any()
                                         }
-                                    })
-                                }}
-                            </Suspense>
-                        }
-                    }).collect_view()}
+                                        _ => view! { <div class="sauce-badge loading">"..."</div> }.into_any()
+                                    }
+                                })
+                            }}
+                        </Suspense>
+                    }
+                }).collect_view()}
                 </div>
             </div>
 

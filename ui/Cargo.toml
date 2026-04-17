@@ -15,4 +15,5 @@ strum = "0.28.0"
 tauri-sys = { git = "https://github.com/JonasKruckenberg/tauri-sys", branch = "v2", features = ["core"] }
 aet-shared = { workspace = true }
 chrono = "0.4.44"
+serde = { version = "1.0.228", features = ["derive"] }
 

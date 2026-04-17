@@ -15,34 +15,37 @@ pub fn get_player_data(state: State<'_, AppState>) -> UserData {
 
 #[tauri::command]
 pub fn update_player_specs(handle: tauri::AppHandle,state: State<'_, AppState>,updated_spec_id :SpecId, level: u32)-> Result<(), String> {
-    let mut data = state.user.lock().unwrap();
-
-    data.set_spec_level(updated_spec_id, level);
-
+    {
+        let mut data = state.user.lock().unwrap();
+        data.set_spec_level(updated_spec_id, level);
+    }
     save_user(&handle,&state)
 }
 
 #[tauri::command]
 pub fn update_player_mastery(handle: tauri::AppHandle,state: State<'_, AppState>, cat_id: CategoryId, level: u32)-> Result<(), String> {
-    let mut data = state.user.lock().unwrap();
-
-    data.set_mastery_level(cat_id, level);
+    {
+        let mut data = state.user.lock().unwrap();
+        data.set_mastery_level(cat_id, level);
+    }
 
     save_user(&handle,&state)
 }
 
+#[tauri::command]
 pub fn update_active_tab(handle: tauri::AppHandle,state: State<'_, AppState>, new_active_tab: ActiveTab)-> Result<(), String> {
-    let mut data = state.user.lock().unwrap();
-    data.active_tab = new_active_tab;
-    save_user(&handle,&state)
-}
-pub fn update_active_category(handle: tauri::AppHandle,state: State<'_, AppState>, new_active_category: CategoryId)-> Result<(), String> {
-    let mut data = state.user.lock().unwrap();
-    data.active_category = new_active_category;
+    {
+        let mut data = state.user.lock().unwrap();
+        data.active_tab = new_active_tab;
+    }
     save_user(&handle,&state)
 }
 
-pub fn save_snapshot(handle: tauri::AppHandle,state: State<'_, AppState>,new_data: UserData) -> Result<(), String> {
-    *state.user.lock().unwrap() = new_data;
-    save_user(&handle, &state)
+#[tauri::command]
+pub fn update_active_category(handle: tauri::AppHandle,state: State<'_, AppState>, new_active_category: CategoryId)-> Result<(), String> {
+    {
+        let mut data = state.user.lock().unwrap();
+        data.active_category = new_active_category;
+    }
+    save_user(&handle,&state)
 }

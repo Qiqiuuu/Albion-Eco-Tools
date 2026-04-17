@@ -16,10 +16,10 @@ pub fn CookingContent(
     view! {
         <div class="content">
             <Config/>
-            <Enchant/>
+            // <Enchant/>
             <div class="panels">
-                <Tracking/>
-                <Ingredients/>
+                // <Tracking/>
+                // <Ingredients/>
             </div>
         </div>
     }

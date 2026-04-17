@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Albion Economy Tools",
+  "productName": "albion-economy-tools",
   "version": "0.1.0",
-  "identifier": "Albion Economy Tools",
+  "identifier": "com.albion.economy.tools",
   "build": {
     "beforeDevCommand": "trunk serve",
     "devUrl": "http://localhost:1420",

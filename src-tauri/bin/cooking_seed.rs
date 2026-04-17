@@ -405,8 +405,8 @@ fn main() -> anyhow::Result<()> {
     let home = std::env::var("HOME")?;
     let path = PathBuf::from(home)
         .join(".config/Albion Economy Tools/specs.json");
-    std::fs::create_dir_all(path.parent().unwrap())?;
-    std::fs::write(&path, serde_json::to_string_pretty(&specs)?)?;
+    fs::create_dir_all(path.parent().unwrap())?;
+    fs::write(&path, serde_json::to_string_pretty(&specs)?)?;
 
     println!("Zapisano specs do {:?}", path);
 

@@ -46,7 +46,15 @@ pub fn Sidebar() -> impl IntoView {
                                 {specs.into_iter().map(|spec| {
                                     let spec_id = spec.id;
                                     let spec_name = spec.get_name();
-                                    let spec_level = spec.get_level();
+                                    let spec_level = move || {
+                                        data.get()
+                                            .specializations
+                                            .iter()
+                                            .find(|cat| cat.id == cat_id)
+                                            .and_then(|cat| cat.get_specs().into_iter().find(|s| s.id == spec_id))
+                                            .map(|s| s.get_level())
+                                            .unwrap_or(0)
+                                    };
 
                                     view! {
                                         <div class="sidebar-item">
@@ -55,24 +63,27 @@ pub fn Sidebar() -> impl IntoView {
                                                 <button
                                                     class="spec-lvl-btn"
                                                     on:click=move |e| {
-                                                        e.stop_propagation();
-                                                        let new_lvl = spec_level.saturating_sub(1);
-                                                        set_data.update(|d| d.set_spec_level(spec_id, new_lvl));
-                                                        spawn_local(async move {
-                                                            let _ = send_specs_update(spec_id, new_lvl).await;
-                                                        });
-                                                    }
+    e.stop_propagation();
+    let new_lvl = (spec_level() + 1).min(100);
+    leptos::logging::log!("KLIK + spec_id={:?} new_lvl={}", spec_id, new_lvl);
+    set_data.update(|d| d.set_spec_level(spec_id, new_lvl));
+    spawn_local(async move {
+        leptos::logging::log!("spawn_local START");
+        let result = send_specs_update(spec_id, new_lvl).await;
+        leptos::logging::log!("spawn_local END result={:?}", result);
+    });
+}
                                                 >
                                                     "−"
                                                 </button>
 
-                                                <span class="spec-lvl-val">{move || spec_level}</span>
+                                                <span class="spec-lvl-val">{spec_level}</span>
 
                                                 <button
                                                     class="spec-lvl-btn"
                                                     on:click=move |e| {
                                                         e.stop_propagation();
-                                                        let new_lvl = (spec_level+ 1).min(100);
+                                                        let new_lvl = (spec_level() + 1).min(100);
                                                         set_data.update(|d| d.set_spec_level(spec_id, new_lvl));
                                                         spawn_local(async move {
                                                             let _ = send_specs_update(spec_id, new_lvl).await;
