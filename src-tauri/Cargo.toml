@@ -22,13 +22,13 @@ anyhow = "1.0.102"
 serde_json = "1.0.149"
 aet-shared = { path = "../shared" }
 
+
 [[bin]]
 name = "aet-core"
 path = "src/main.rs"
 
 [[bin]]
-name = "cooking_seed"
-path = "bin/cooking_seed.rs"
-
+name = "seed"
+path = "bin/seeding.rs"
 
 

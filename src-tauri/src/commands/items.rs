@@ -1,9 +1,10 @@
-
+use std::os::linux::raw::stat;
 use tauri::State;
 use aet_shared::models::calculations::{CraftingContext, CraftingLocation, CraftingResult};
 use aet_shared::models::items::{ItemRegistry};
-use aet_shared::models::prices::{ItemPrice, PriceMap};
+use aet_shared::models::prices::{PriceMap};
 use crate::calculations::crafting_calculations;
+use crate::loader::{save_prices, save_user};
 use crate::state::AppState;
 
 
@@ -16,6 +17,20 @@ pub fn fetch_all_prices(state: State<AppState>) -> PriceMap {
 #[tauri::command]
 pub fn fetch_all_items(state: State<AppState>) -> ItemRegistry {
     state.items.clone()
+}
+
+#[tauri::command]
+pub fn update_item_price(handle: tauri::AppHandle,state: State<'_, AppState>, unique_name: String, new_price: u32)-> Result<(), String> {
+    {
+        {
+            let mut data = state.prices.write().unwrap();
+            match data.get_mut(&unique_name) {
+                Some(prices) => {prices.current = new_price}
+                None => {}
+            }
+        }
+    }
+    save_prices(&handle,&state)
 }
 
 #[tauri::command]

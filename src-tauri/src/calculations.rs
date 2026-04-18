@@ -2,8 +2,11 @@ use aet_shared::models::calculations::{CraftingContext, CraftingResult};
 use aet_shared::models::specializations::{Category, SpecId};
 
 fn is_item_with_no_rr(unique_name: &str) -> bool {
-    unique_name.contains("QUESTITEM_TOKEN_AVALON")
+    ["QUESTITEM_TOKEN_AVALON", "SEAWEED", "FISHCHOPS"]
+        .iter()
+        .any(|&pattern| unique_name.contains(pattern))
 }
+
 
 fn calculate_total_focus_points(categories: &[Category], target_id: &SpecId) -> u32 {
     categories.iter()

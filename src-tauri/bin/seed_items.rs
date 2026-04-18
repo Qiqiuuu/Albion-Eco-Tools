@@ -1,18 +1,7 @@
-mod seed_items;
-pub mod main;
-pub mod seed;
-
-use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
-use chrono::Utc;
-use aet_shared::models::items::{
-    Consumable, Crafting, Enchantment, Ingredient, Item
-    , ItemEntity, ItemRegistry, Product, Recipe, Station, Tier
-};
-use aet_shared::models::prices::CityPrice;
+use aet_shared::models::items::{Consumable, Crafting, Enchantment, Ingredient, Item, ItemEntity, ItemRegistry, Product, Recipe, Station, Tier};
 use aet_shared::models::specializations::SpecId;
-use aet_shared::models::user::UserData;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct FocusCost {
@@ -78,9 +67,9 @@ fn food_enchants(
     variants
 }
 
-fn main() -> anyhow::Result<()> {
+pub fn run() -> anyhow::Result<ItemRegistry> {
     let mut items: Vec<ItemEntity> = Vec::new();
-    // --- Crops ---
+
     for (id, n, t) in [
         ("T1_CARROT", "Carrot", Tier::T1), ("T2_BEAN", "Bean", Tier::T2),
         ("T3_WHEAT", "Wheat", Tier::T3),   ("T4_TURNIP", "Turnip", Tier::T4),
@@ -357,53 +346,19 @@ fn main() -> anyhow::Result<()> {
                                vec![ing("T8_MEAT", 72), ing("T4_BREAD", 36), ing("T8_BUTTER", 18), ing("QUESTITEM_TOKEN_AVALON", 90)],
                                SpecId::SandwichChef, Station::Cook, [90, 90, 90], [494,694,1094,2295]));
 
-
-
-
-
-
-
     let registry = ItemRegistry {
         items: items.into_iter().map(|i| (i.unique_name.clone(), i)).collect(),
         last_price_update: None,
     };
 
-    let home = std::env::var("HOME").expect("Brak HOME");
-    let path = PathBuf::from(home.clone()).join(".config/Albion Economy Tools/items.json");
+    let home = std::env::var("HOME")?;
+    let path = PathBuf::from(&home)
+        .join(".config/Albion Economy Tools/items.json");
+
     fs::create_dir_all(path.parent().unwrap())?;
     fs::write(&path, serde_json::to_string_pretty(&registry)?)?;
 
-    println!("Zapisano {} przedmiotów do {:?}", registry.items.len(), path);
+    println!("Seeded {} items to {:?}", registry.items.len(), path);
 
-
-    let cities = vec![
-        "Caerleon", "Bridgewatch", "Martlock", "Thetford", "Fort Sterling", "Lymhurst", "Brecilien"
-    ];
-
-    let empty_price = CityPrice {
-        sell_price_min: 0,
-        buy_price_max: 0,
-        updated_at: Utc::now(),
-    };
-
-    let price_map: HashMap<String, HashMap<String, CityPrice>> = registry
-        .items
-        .keys()
-        .map(|unique_name| {
-            let city_prices: HashMap<String, CityPrice> = cities
-                .iter()
-                .map(|city| (city.to_string(), empty_price.clone()))
-                .collect();
-            (unique_name.clone(), city_prices)
-        })
-        .collect();
-
-    let prices_path = PathBuf::from(home).join(".config/Albion Economy Tools/prices.json");
-    fs::write(&prices_path, serde_json::to_string_pretty(&price_map)?)?;
-    println!("Zapisano ceny dla {} przedmiotów do {:?}", price_map.len(), prices_path);
-    
-
-    Ok(())
-
-
+    Ok(registry)
 }

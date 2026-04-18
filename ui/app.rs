@@ -20,7 +20,7 @@ pub fn App() -> impl IntoView {
     let items_res  = LocalResource::new(|| async move { fetch_all_items().await });
     let data_res  = LocalResource::new(|| async move { fetch_player_data().await });
 
-    // Effect::new(move |_| { if let Some(d) = prices_res.get() { set_prices.set(d); } });
+    Effect::new(move |_| { if let Some(d) = prices_res.get() { set_prices.set(d); } });
     Effect::new(move |_| { if let Some(d) = items_res.get()  { set_items.set(d); } });
     Effect::new(move |_| { if let Some(d) = data_res.get()  { set_data.set(d); } });
 
