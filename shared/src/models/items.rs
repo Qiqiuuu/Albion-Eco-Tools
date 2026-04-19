@@ -97,6 +97,20 @@ pub enum Tier {
     #[serde(rename = "8")]
     T8,
 }
+impl Tier{
+    pub fn badge(&self) -> (&'static str, &'static str) {
+        match self {
+            Tier::T1 => ("tier-badge t1", "T1"),
+            Tier::T2 => ("tier-badge t2", "T2"),
+            Tier::T3 => ("tier-badge t3", "T3"),
+            Tier::T4 => ("tier-badge t4", "T4"),
+            Tier::T5 => ("tier-badge t5", "T5"),
+            Tier::T6 => ("tier-badge t6", "T6"),
+            Tier::T7 => ("tier-badge t7", "T7"),
+            Tier::T8 => ("tier-badge t8", "T8"),
+        }
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Enchantment {
@@ -110,6 +124,37 @@ pub enum Enchantment {
     Exceptional,
     #[serde(rename = "4")]
     Pristine,
+}
+impl Enchantment {
+    pub fn to_u8(&self) -> u8 {
+        match self {
+            Enchantment::Common      => 0,
+            Enchantment::Uncommon    => 1,
+            Enchantment::Rare        => 2,
+            Enchantment::Exceptional => 3,
+            Enchantment::Pristine    => 4,
+        }
+    }
+
+    pub fn from_u8(value: u8) -> Self {
+        match value {
+            1 => Enchantment::Uncommon,
+            2 => Enchantment::Rare,
+            3 => Enchantment::Exceptional,
+            4 => Enchantment::Pristine,
+            _ => Enchantment::Common,
+        }
+    }
+
+    pub fn badge(&self) -> (&'static str, &'static str) {
+        match self {
+            Enchantment::Uncommon    => ("enchant-badge e1", ".1"),
+            Enchantment::Rare        => ("enchant-badge e2", ".2"),
+            Enchantment::Exceptional => ("enchant-badge e3", ".3"),
+            Enchantment::Pristine    => ("enchant-badge e4", ".4"),
+            Enchantment::Common      => ("", ""),
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -165,6 +210,12 @@ pub struct Ingredient {
     pub count: u32,
 }
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct TrackedFood {
+    pub item: ItemEntity,
+    pub quantity: i32,
+}
+
 impl ItemEntity {
     pub fn new(unique_name: &str, name: &str, tier: Tier, value: u32) -> Self {
         Self {
@@ -212,4 +263,6 @@ impl ItemEntity {
         self.enchantment = enchantment;
         self
     }
+
+
 }

@@ -19,7 +19,7 @@ pub fn CookingContent(
             <Enchant/>
             <div class="panels">
                 <Tracking/>
-                // <Ingredients/>
+                <Ingredients/>
             </div>
         </div>
     }

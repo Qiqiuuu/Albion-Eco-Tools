@@ -40,7 +40,6 @@ dependencies = [
  "console_error_panic_hook",
  "leptos",
  "serde",
- "serde_json",
  "strum",
  "tauri-sys",
 ]

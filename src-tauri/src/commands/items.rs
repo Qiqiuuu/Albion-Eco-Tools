@@ -4,14 +4,17 @@ use aet_shared::models::calculations::{CraftingContext, CraftingLocation, Crafti
 use aet_shared::models::items::{ItemRegistry};
 use aet_shared::models::prices::{PriceMap};
 use crate::calculations::crafting_calculations;
-use crate::loader::{save_prices, save_user};
+use crate::loader::{save_prices};
 use crate::state::AppState;
 
 
 
+
 #[tauri::command]
-pub fn fetch_all_prices(state: State<AppState>) -> PriceMap {
-    state.prices.read().unwrap().clone()
+pub fn fetch_all_prices(state: State<AppState>) -> Result<PriceMap, String> {
+    let Ok(prices) = state.prices.read()
+    else { return Err("Price lock is poisoned".to_string()) };
+    Ok(prices.clone())
 }
 
 #[tauri::command]
@@ -23,7 +26,8 @@ pub fn fetch_all_items(state: State<AppState>) -> ItemRegistry {
 pub fn update_item_price(handle: tauri::AppHandle,state: State<'_, AppState>, unique_name: String, new_price: u32)-> Result<(), String> {
     {
         {
-            let mut data = state.prices.write().unwrap();
+            let Ok(mut data) = state.prices.write()
+            else { return Err("RwLock is poisoned".to_string()) };
             match data.get_mut(&unique_name) {
                 Some(prices) => {prices.current = new_price}
                 None => {}
