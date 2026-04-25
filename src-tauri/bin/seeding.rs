@@ -8,12 +8,12 @@ fn main() -> Result<()> {
 
     println!("📦 Generowanie przedmiotów...");
     seed_items::run()?;
-
+    //
     println!("💰 Generowanie cen...");
     seed_prices::run()?;
-
-    println!("👤 Generowanie danych użytkownika...");
-    seed_user::run()?;
+    // 
+    // println!("👤 Generowanie danych użytkownika...");
+    // seed_user::run()?;
 
     println!("✅ Sukces! Wszystkie dane zostały pomyślnie zapisane.");
 

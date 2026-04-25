@@ -3,7 +3,7 @@ use std::fs;
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager, State};
 use aet_shared::models::items::ItemRegistry;
-use aet_shared::models::prices::{ItemPrice, PriceMap};
+use aet_shared::models::prices::{PriceMap};
 use aet_shared::models::user::UserData;
 use crate::state::AppState;
 
@@ -12,14 +12,14 @@ const USER_FILE:   &str = "user";
 const ITEMS_FILE:  &str = "items";
 const PRICES_FILE: &str = "prices";
 
-fn get_config_path(handle: &tauri::AppHandle, json: &str) -> Result<PathBuf, String> {
+fn get_config_path(handle: &AppHandle, json: &str) -> Result<PathBuf, String> {
     handle.path()
         .app_config_dir()
         .map(|p| p.join(format!("{}.json", json)))
         .map_err(|e| e.to_string())
 }
 
-pub fn save_json<T: Serialize>(handle: &tauri::AppHandle, data: &T,json: &str) -> Result<(), String> {
+pub fn save_json<T: Serialize>(handle: &AppHandle, data: &T,json: &str) -> Result<(), String> {
     let path = get_config_path(handle, json)?;
 
     if let Some(parent) = path.parent() {
@@ -31,7 +31,7 @@ pub fn save_json<T: Serialize>(handle: &tauri::AppHandle, data: &T,json: &str) -
 }
 
 
-pub fn load_json<T: DeserializeOwned + Default>(handle: &tauri::AppHandle,json: &str) -> T {
+pub fn load_json<T: DeserializeOwned + Default>(handle: &AppHandle,json: &str) -> T {
     let path = get_config_path(handle,json).ok();
 
     path.and_then(|p| fs::read_to_string(p).ok())

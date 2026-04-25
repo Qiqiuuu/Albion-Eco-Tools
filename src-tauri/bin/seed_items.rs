@@ -172,6 +172,38 @@ pub fn run() -> anyhow::Result<ItemRegistry> {
     items.push(ItemEntity::new("QUESTITEM_TOKEN_AVALON", "Avalonian Energy", Tier::T6, 64)
         .with_category(Item::Crafting(Crafting::Resource)));
 
+
+    // --- Meats ---
+    for (id, n, t) in [
+        ("T3_MEAT", "Raw Chicken", Tier::T3),
+        ("T4_MEAT", "Raw Goat",    Tier::T4),
+        ("T5_MEAT", "Raw Goose",   Tier::T5),
+        ("T6_MEAT", "Raw Mutton",  Tier::T6),
+        ("T7_MEAT", "Raw Pork",    Tier::T7),
+        ("T8_MEAT", "Raw Beef",    Tier::T8),
+    ] {
+        items.push(ItemEntity::new(id, n, t, 40)
+            .with_category(Item::Product(Product::Meat)));
+    }
+    // --- Eggs ---
+    for (id, n, t) in [
+        ("T3_EGG", "Hen Eggs",    Tier::T3),
+        ("T5_EGG", "Goose Eggs",  Tier::T5),
+    ] {
+        items.push(ItemEntity::new(id, n, t, 40)
+            .with_category(Item::Product(Product::AnimalProduct)));
+    }
+
+    // --- Milk ---
+    for (id, n, t) in [
+        ("T4_MILK", "Goat Milk",    Tier::T4),
+        ("T6_MILK", "Sheep Milk",  Tier::T6),
+        ("T8_MILK", "Cow Milk",  Tier::T8),
+    ] {
+        items.push(ItemEntity::new(id, n, t, 40)
+            .with_category(Item::Product(Product::AnimalProduct)));
+    }
+
     // --- Butters ---
     for (id, n, t, milk) in [
         ("T4_BUTTER", "Goat Butter",  Tier::T4, "T4_MILK"),

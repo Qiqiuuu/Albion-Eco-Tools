@@ -177,6 +177,15 @@ pub struct ItemRegistry {
     pub last_price_update: Option<DateTime<Utc>>,
 }
 
+impl ItemRegistry {
+    pub fn get_item_entity_by_name_and_enchant(&self, name: &str, enchantment: Enchantment) -> &ItemEntity {
+        self.items
+            .values()
+            .find(|item| item.name == name && item.enchantment == enchantment)
+            .unwrap()
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct ItemEntity {
     pub unique_name: String,
@@ -191,12 +200,18 @@ pub struct ItemEntity {
     pub base_focus: Option<u32>,
     pub specialization: Option<SpecId>,
 }
+impl ItemEntity {
+    pub fn get_img(&self) -> String {
+        format!("https://render.albiononline.com/v1/item/{}.png", &self.unique_name)
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Recipe {
     pub output_count: u8,
     pub ingredients: Vec<Ingredient>,
 }
+
 
 impl Recipe {
     pub fn new(output_count: u8, ingredients: Vec<Ingredient>) -> Self {
@@ -210,10 +225,16 @@ pub struct Ingredient {
     pub count: u32,
 }
 
+impl Ingredient {
+    pub fn new(unique_name: String, count: u32) -> Self {
+        Self { unique_name, count }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct TrackedFood {
     pub item: ItemEntity,
-    pub quantity: i32,
+    pub quantity: u32,
 }
 
 impl ItemEntity {

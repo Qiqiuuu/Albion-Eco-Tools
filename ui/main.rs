@@ -1,6 +1,7 @@
 mod components;
 mod app;
 pub mod api;
+pub mod utils;
 
 use app::App;
 use leptos::prelude::*;

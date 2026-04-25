@@ -1,11 +1,13 @@
+use std::collections::HashSet;
 use leptos::prelude::*;
 use leptos::{component, view, IntoView};
-use leptos::attr::data;
 use leptos::reactive::spawn_local;
-use aet_shared::models::items::{Consumable, Enchantment, Item, ItemEntity, ItemRegistry, TrackedFood};
+use aet_shared::models::items::{Consumable, Enchantment, Item, ItemRegistry, TrackedFood};
 use aet_shared::models::user::UserData;
-use crate::api::items::fetch_all_items;
 use crate::api::user::{send_add_tracked_food, send_remove_tracked_food};
+use food_card::FoodCard;
+
+pub mod food_card;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 enum ModalMode {
@@ -13,14 +15,10 @@ enum ModalMode {
     Edit(usize),
 }
 
-fn item_img_url(food: &TrackedFood) -> String {
-    format!("https://render.albiononline.com/v1/item/{}.png", food.item.unique_name)
-}
-
-fn build_tracked_food(dish: ItemEntity, enchant: u8, qty: i32) -> TrackedFood {
-    let mut item = dish;
-    item.enchantment = Enchantment::from_u8(enchant);
-    TrackedFood { item, quantity: qty }
+fn build_tracked_food(item_registry: ItemRegistry,dish_name: String, enchant: u8, qty: u32) -> TrackedFood {
+    let enchant = Enchantment::from_u8(enchant);
+    let item = item_registry.get_item_entity_by_name_and_enchant(dish_name.as_str(), enchant);
+    TrackedFood {item: item.clone(), quantity: qty }
 }
 
 #[component]
@@ -33,31 +31,33 @@ pub fn Tracking() -> impl IntoView {
 
     let search_query    = RwSignal::new(String::new());
     let modal_mode      = RwSignal::new(None::<ModalMode>);
-    let selected_dish   = RwSignal::new(None::<ItemEntity>);
-    let pending_qty     = RwSignal::new(10i32);
+    let selected_dish   = RwSignal::new(String::new());
+    let pending_qty     = RwSignal::new(1u32);
     let pending_enchant = RwSignal::new(0u8);
+    let dish_selected = move || !selected_dish.get().is_empty();
+
 
     let all_dishes = Memo::new(move |_| {
         items.get().items.values()
             .filter(|e| matches!(e.category, Item::Consumable(Consumable::Food)))
             .cloned()
-            .collect::<Vec<_>>()
+            .map(|e| e.name)
+            .collect::<HashSet<_>>()
     });
 
     let suggestions = Memo::new(move |_| {
         let query = search_query.get().to_lowercase();
         if query.is_empty() { return Vec::new(); }
         all_dishes.get().into_iter()
-            .filter(|item| item.name.to_lowercase().contains(&query))
-            .take(5)
+            .filter(|item| item.to_lowercase().contains(&query))
             .collect::<Vec<_>>()
     });
 
     let close_modal = move || {
         modal_mode.set(None);
-        selected_dish.set(None);
+        selected_dish.set(String::new());
         search_query.set(String::new());
-        pending_qty.set(10);
+        pending_qty.set(1);
         pending_enchant.set(0);
     };
 
@@ -65,19 +65,19 @@ pub fn Tracking() -> impl IntoView {
 
     let open_edit = move |idx: usize| {
         let Some(food) = tracked_foods.get().into_iter().nth(idx) else { return };
-        selected_dish.set(Some(food.item.clone()));
+        selected_dish.set(food.item.name);
         pending_qty.set(food.quantity);
         pending_enchant.set(food.item.enchantment.to_u8());
         modal_mode.set(Some(ModalMode::Edit(idx)));
     };
 
     let confirm_save = move || {
-        let Some(dish) = selected_dish.get() else { return };
+        let dish = selected_dish.get();
 
         let qty     = pending_qty.get();
         let enchant = pending_enchant.get();
 
-        let new_entry = build_tracked_food(dish, enchant, qty);
+        let new_entry = build_tracked_food(items.get(),dish, enchant, qty);
 
         set_data.update(|user_state| {
             match modal_mode.get() {
@@ -120,54 +120,25 @@ pub fn Tracking() -> impl IntoView {
                 <div class="panel-title">"Tracked Food"</div>
             </div>
             <div class="panel-body">
-                <For
-                    each={move || tracked_foods.get().into_iter().enumerate().collect::<Vec<_>>()}
-                    key={|(_, f)| f.item.unique_name.clone()}
-                    let:entry
-                >
-                    {
-                        let (idx, food) = entry;
-                        let (tier_cls, tier_lbl) = food.item.tier.badge();
-                        let (enc_cls, enc_lbl) = food.item.enchantment.badge();
-                        let name = food.item.name.clone();
-                        let img_url = item_img_url(&food);
-                        let show_enchant = !enc_lbl.is_empty();
-
-                        view! {
-                            <div class="food-card" on:click=move |_| open_edit(idx)>
-                                <div class="food-icon">
-                                    <img src=img_url alt=name.clone() />
-                                </div>
-                                <div class="food-info">
-                                    <div class="food-card-name">{name}</div>
-                                    <div class="food-card-meta">
-                                        <span class=tier_cls>{tier_lbl}</span>
-                                        {if show_enchant {
-                                            Some(view! { <span class=enc_cls>{enc_lbl}</span> })
-                                        } else {
-                                            None
-                                        }}
-                                        <span class="qty-sep">"×"</span>
-                                        <span class="food-qty">
-                                            {move || tracked_foods.with(|list| {
-                                                list.get(idx).map(|f| f.quantity).unwrap_or(0)
-                                            })}
-                                        </span>
-                                    </div>
-                                </div>
-                                <button
-                                    class="food-card-remove"
-                                    on:click=move |ev| {
-                                        ev.stop_propagation();
-                                        remove_food(idx);
-                                    }
-                                >
-                                    "×"
-                                </button>
-                            </div>
-                        }
-                    }
-                </For>
+                    <div class="food-grid">
+                        <For
+                            each={move || tracked_foods.get().into_iter().enumerate().collect::<Vec<_>>()}
+                            key={|(_, f)| format!("{}-{}", f.item.unique_name, f.item.enchantment.to_u8())}
+                            let:entry
+                        >
+                            {
+                                let (idx, food) = entry;
+                                view! {
+                                    <FoodCard
+                                        idx=idx
+                                        food=food
+                                        on_click=Callback::new(move |i| open_edit(i))
+                                        on_remove=Callback::new(move |i| remove_food(i))
+                                    />
+                                }
+                            }
+                        </For>
+                </div>
 
                 <button class="add-food-btn" on:click=move |_| open_add()>
                     "+ Add Food Item"
@@ -188,7 +159,7 @@ pub fn Tracking() -> impl IntoView {
                     </div>
 
                     <Show
-                        when=move || selected_dish.get().is_some()
+                        when=move || dish_selected()
                         fallback=move || view! {
                             <input
                                 type="text"
@@ -199,28 +170,22 @@ pub fn Tracking() -> impl IntoView {
                             />
                             <div class="food-suggestions open">
                                 <For
-                                    each={move || suggestions.get()}
-                                    key={|d| d.unique_name.clone()}
+                                    each=move || suggestions.get()
+                                    key=|d| d.clone()
                                     let:dish
                                 >
-                                    {
-                                        let label      = dish.name.clone();
-                                        let dish_clone = dish.clone();
-                                        view! {
-                                            <div
-                                                class="food-sugg-item"
-                                                on:click=move |_| selected_dish.set(Some(dish_clone.clone()))
-                                            >
-                                                {label}
-                                            </div>
-                                        }
-                                    }
+                                    <div
+                                        class="food-sugg-item"
+                                        on:click=move |_| selected_dish.set(dish.clone())
+                                    >
+                                        {dish.clone()}
+                                    </div>
                                 </For>
                             </div>
                         }
                     >
                         <div class="modal-selected-name">
-                            {move || selected_dish.get().map(|d| d.name).unwrap_or_default()}
+                            {move || selected_dish.get()}
                         </div>
 
                         <div class="modal-row">
@@ -239,7 +204,7 @@ pub fn Tracking() -> impl IntoView {
                         <div class="modal-row">
                             <label>"Enchant"</label>
                             <div class="etch-opt-group">
-                                {[0u8, 1, 2, 3].into_iter().map(|e| {
+                                {[0, 1, 2, 3].into_iter().map(|e| {
                                     let label = if e == 0 { "None".into() } else { format!(".{e}") };
                                     view! {
                                         <button
@@ -258,7 +223,7 @@ pub fn Tracking() -> impl IntoView {
                             <button
                                 class="btn-back"
                                 on:click=move |_| {
-                                    selected_dish.set(None);
+                                    selected_dish.set(String::new());
                                     search_query.set(String::new());
                                 }
                             >
@@ -286,7 +251,7 @@ pub fn Tracking() -> impl IntoView {
                             "Cancel"
                         </button>
 
-                        <Show when=move || selected_dish.get().is_some()>
+                        <Show when=move || dish_selected()>
                             <button class="btn-add" on:click=move |_| confirm_save()>
                                 {move || if matches!(modal_mode.get(), Some(ModalMode::Edit(_))) {
                                     "Save Changes"
