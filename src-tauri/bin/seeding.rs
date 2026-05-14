@@ -6,8 +6,8 @@ mod seed_user;
 fn main() -> Result<()> {
     println!("🚀 Rozpoczynam proces seedowania danych...");
 
-    println!("📦 Generowanie przedmiotów...");
-    seed_items::run()?;
+    // println!("📦 Generowanie przedmiotów...");
+    // seed_items::run()?;
     //
     println!("💰 Generowanie cen...");
     seed_prices::run()?;

@@ -1,5 +1,5 @@
 
-use leptos::prelude::{CollectView, ElementChild, OnAttribute, ReadSignal, StyleAttribute, Update, WriteSignal};
+use leptos::prelude::{CollectView, ElementChild, Memo, OnAttribute, ReadSignal, StyleAttribute, Update, With, WriteSignal};
 use leptos::component;
 use leptos::context::use_context;
 use leptos::prelude::{ClassAttribute, Get};
@@ -15,16 +15,19 @@ pub fn Sidebar() -> impl IntoView {
     let data = use_context::<ReadSignal<UserData>>().expect("No user data set");
     let set_data = use_context::<WriteSignal<UserData>>().expect("No user data set");
 
+    let specializations = Memo::new(move |_| data.with(|d| d.specializations.clone()));
+    let active_category = Memo::new(move |_| data.with(|d| d.active_category.clone()));
+
     view! {
         <div class="sidebar">
             {move || {
-                data.get().specializations.into_iter().map(|category| {
+                specializations.get().into_iter().map(|category| {
                     let cat_id = category.id;
                     let label = category.get_label();
                     let specs = category.get_specs();
 
 
-                    let is_open = move || data.get().active_category == cat_id;
+                    let is_open = move || active_category.get() == cat_id;
 
                     view! {
                         <div class="sidebar-section">
@@ -47,8 +50,8 @@ pub fn Sidebar() -> impl IntoView {
                                     let spec_id = spec.id;
                                     let spec_name = spec.get_name();
                                     let spec_level = move || {
-                                        data.get()
-                                            .specializations
+                                        specializations
+                                            .get()
                                             .iter()
                                             .find(|cat| cat.id == cat_id)
                                             .and_then(|cat| cat.get_specs().into_iter().find(|s| s.id == spec_id))

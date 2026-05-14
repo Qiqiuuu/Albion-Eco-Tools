@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use chrono::{DateTime, Utc};
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use crate::models::specializations::{SpecId};
 
@@ -112,7 +113,7 @@ impl Tier{
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
 pub enum Enchantment {
     #[serde(rename = "0")]
     Common,
@@ -178,11 +179,22 @@ pub struct ItemRegistry {
 }
 
 impl ItemRegistry {
-    pub fn get_item_entity_by_name_and_enchant(&self, name: &str, enchantment: Enchantment) -> &ItemEntity {
+    pub fn get_item_entity_by_name(&self, name: &str) -> &ItemEntity {
         self.items
             .values()
-            .find(|item| item.name == name && item.enchantment == enchantment)
+            .find(|item| item.name == name && item.enchantment == Enchantment::Common)
             .unwrap()
+    }
+
+    pub fn get_item_enchantment_versions(&self,base_unique_name: &str) -> HashMap<Enchantment, &ItemEntity> {
+        let pattern = format!(r"^{}(@\d+)?$", regex::escape(base_unique_name));
+        let re = Regex::new(&pattern).unwrap();
+
+        self.items
+            .values()
+            .filter(|item| re.is_match(&item.unique_name))
+            .map(|item| {return (item.enchantment.clone(),item)})
+            .collect()
     }
 }
 
@@ -231,9 +243,56 @@ impl Ingredient {
     }
 }
 
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct TrackedFoodMap {
+    pub base_name: String,
+    pub map: HashMap<String, TrackedFood>,
+    pub current_tracked: String,
+}
+
+impl TrackedFoodMap {
+    pub(crate) fn new() -> TrackedFoodMap {
+        Self{
+            base_name: String::new(),
+            map: HashMap::new(),
+            current_tracked: String::new(),
+        }
+    }
+
+    pub fn new_food(base_name: String) -> Self {
+        let mut map = HashMap::new();
+
+
+        let enchantments = vec![
+            base_name.clone(),              
+            format!("{}@1", base_name),     
+            format!("{}@2", base_name),     
+            format!("{}@3", base_name),     
+        ];
+
+        for id in enchantments {
+            map.insert(
+                id.clone(),
+                TrackedFood {
+                    unique_name: id,
+                    quantity: 1,
+                },
+            );
+        }
+
+        Self {
+            base_name: base_name.clone(),
+            current_tracked: base_name,
+            map,
+        }
+    }
+    
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct TrackedFood {
-    pub item: ItemEntity,
+    pub unique_name: String,
     pub quantity: u32,
 }
 

@@ -18,6 +18,8 @@ pub fn Topbar(
         spawn_local(async move {send_active_tab_update(new_tab).await});
     };
 
+    let active_tab = Memo::new(move |_| data.with(|d| d.active_tab.clone()));
+
     view! {
         <div class="topbar">
             <div class="topbar-logo">"ALBION " <span>"ECON"</span></div>
@@ -26,7 +28,7 @@ pub fn Topbar(
                     view! {
                         <div
                             class="tab"
-                            class:active=move || data.get().active_tab == tab
+                            class:active=move || active_tab.get() == tab
                             on:click=move |_| change_tab(tab)
                         >
                         {tab.to_string()}

@@ -1,6 +1,6 @@
 use tauri::{State};
 use aet_shared::models::config::{ActiveTab, AveragePrice, Cities};
-use aet_shared::models::items::TrackedFood;
+use aet_shared::models::items::{TrackedFood, TrackedFoodMap};
 use aet_shared::models::specializations::{CategoryId, SpecId};
 use aet_shared::models::user::{UserData};
 use crate::loader::save_user;
@@ -26,10 +26,9 @@ pub fn get_player_data(state: State<'_, AppState>) -> Result<UserData, String> {
 }
 
 #[tauri::command]
-pub fn get_tracked_foods(state: State<'_, AppState>) -> Result<Vec<TrackedFood>, String> {
+pub fn get_tracked_foods(state: State<'_, AppState>) -> Result<Vec<TrackedFoodMap>, String> {
     let Ok(user) = state.user.lock()
     else { return Err("User lock is poisoned".to_string()) };
-    
     Ok(user.tracked_foods.clone())
 }
 
@@ -86,23 +85,25 @@ pub fn update_avg(handle: tauri::AppHandle,state: State<'_, AppState>, new_avg: 
 }
 
 #[tauri::command]
-pub fn add_tracked_food(handle: tauri::AppHandle,state: State<'_, AppState>, new_food: TrackedFood)-> Result<(), String> {
-    with_user!(state, |data| {data.tracked_foods.push(new_food)});
-    save_user(&handle,&state)
+pub fn add_tracked_food(handle: tauri::AppHandle, state: State<'_, AppState>, new_food_map: TrackedFoodMap) -> Result<(), String> {
+    with_user!(state, |data| {
+        data.add_tracked_food(new_food_map);
+    });
+    save_user(&handle, &state)
 }
 
 #[tauri::command]
-pub fn remove_tracked_food(handle: tauri::AppHandle,state: State<'_, AppState>, food_to_remove: TrackedFood)-> Result<(), String> {
+pub fn remove_tracked_food(handle: tauri::AppHandle, state: State<'_, AppState>, food_base_name: &str) -> Result<(), String> {
     with_user!(state, |data| {
-        let Some(index) = data.tracked_foods
-            .iter()
-            .position(|x| x == &food_to_remove)
-        else { return Err("Tracked food not found".to_string()) };
-
-
-        data.tracked_foods.remove(index);
+        data.remove_tracked_food(food_base_name);
     });
-    save_user(&handle,&state)
+    save_user(&handle, &state)
 }
 
-
+#[tauri::command]
+pub fn update_tracked_food(handle: tauri::AppHandle, state: State<'_, AppState>, updated_food_map: TrackedFoodMap) -> Result<(), String> {
+    with_user!(state, |data| {
+        data.update_tracked_food(updated_food_map);
+    });
+    save_user(&handle, &state)
+}

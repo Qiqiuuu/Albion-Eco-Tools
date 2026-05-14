@@ -67,7 +67,6 @@
   --font-ui:   'Inter', sans-serif;
   --font-head: 'Rajdhani', sans-serif;
 
-  /* shared card metrics */
   --card-pad:    10px 12px;
   --card-gap:    8px;
   --card-icon-s: 44px;
@@ -134,8 +133,7 @@ body {
   white-space: nowrap;
 }
 .topbar-logo span { color: var(--text3); font-weight: 400; }
-
-.topbar-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.topbar-actions   { display: flex; align-items: center; gap: 10px; margin-left: auto; }
 
 /* ============================================================
    TABS
@@ -191,10 +189,9 @@ body {
   transition: color 0.15s;
   user-select: none;
 }
-.sidebar-cat:hover { color: var(--text2); }
-.sidebar-cat.open  { color: var(--gold); }
-
-.sidebar-cat-arrow { margin-left: auto; font-size: 10px; transition: transform 0.2s; }
+.sidebar-cat:hover             { color: var(--text2); }
+.sidebar-cat.open              { color: var(--gold); }
+.sidebar-cat-arrow             { margin-left: auto; font-size: 10px; transition: transform 0.2s; }
 .sidebar-cat.open .sidebar-cat-arrow { transform: rotate(90deg); }
 
 .sidebar-items      { display: none; }
@@ -208,10 +205,9 @@ body {
   cursor: pointer;
   transition: background 0.15s;
 }
-.sidebar-item:hover  { background: var(--bg3); }
-.sidebar-item.active { background: var(--gold-dim2); }
-
-.sidebar-item-name { font-size: 12px; color: var(--text2); flex: 1; }
+.sidebar-item:hover              { background: var(--bg3); }
+.sidebar-item.active             { background: var(--gold-dim2); }
+.sidebar-item-name               { font-size: 12px; color: var(--text2); flex: 1; }
 .sidebar-item.active .sidebar-item-name { color: var(--gold); }
 
 .spec-level { display: flex; align-items: center; gap: 4px; }
@@ -249,30 +245,23 @@ body {
 }
 
 .setting-group { display: flex; align-items: center; gap: 8px; }
-
 .setting-label {
-  font-size: 11px;
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  font-weight: 600;
-  font-family: var(--font-head);
+  font-size: 11px; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.6px;
+  font-weight: 600; font-family: var(--font-head);
   white-space: nowrap;
 }
-
 .setting-input {
   background: var(--bg4);
   border: 1px solid var(--border2);
   color: var(--text);
   padding: 4px 8px;
   border-radius: var(--radius-md);
-  font-size: 12px;
-  width: 72px;
+  font-size: 12px; width: 72px;
   font-family: var(--font-ui);
   transition: border-color 0.15s;
 }
 .setting-input:focus { outline: none; border-color: var(--gold); }
-
 .sep { width: 1px; height: 20px; background: var(--border2); }
 
 /* ============================================================
@@ -297,70 +286,8 @@ body {
   border-radius: 50%;
   transition: 0.2s;
 }
-.toggle input:checked + .toggle-slider { background: var(--gold-dim); border-color: var(--gold); }
-.toggle input:checked + .toggle-slider::before { transform: translateX(16px); background: var(--gold); }
-
-/* ============================================================
-   ENCHANT BAR
-   ============================================================ */
-.enchant-bar {
-  display: flex;
-  align-items: flex-start;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  padding: 10px 20px;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-  min-height: 56px;
-  gap: 0;
-}
-
-.enchant-section { display: flex; flex-direction: column; gap: 6px; padding: 0 16px 0 0; }
-
-.enchant-label {
-  font-family: var(--font-head);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 1px;
-  color: var(--text4);
-  text-transform: uppercase;
-  margin-bottom: 2px;
-}
-
-.enchant-sep {
-  width: 1px;
-  background: var(--border2);
-  align-self: stretch;
-  margin: 0 16px;
-  flex-shrink: 0;
-}
-
-.sauce-results-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-
-.sauce-badge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border2);
-  background: var(--bg3);
-  min-width: 70px;
-  transition: border-color 0.15s, background 0.15s;
-}
-.sauce-name {
-  font-family: var(--font-head);
-  font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
-  color: var(--text3); text-transform: uppercase;
-}
-.sauce-cost    { font-size: 10px; color: var(--text4); }
-.sauce-diff    { font-family: var(--font-head); font-size: 13px; font-weight: 700; color: var(--red); }
-.sauce-verdict { font-family: var(--font-head); font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--red); text-transform: uppercase; }
-
-.sauce-badge.is-profit                { border-color: var(--green-border); background: var(--green-dim); }
-.sauce-badge.is-profit .sauce-name    { color: var(--green); }
-.sauce-badge.is-profit .sauce-diff    { color: var(--green); }
-.sauce-badge.is-profit .sauce-verdict { color: var(--green); }
+.toggle input:checked + .toggle-slider                { background: var(--gold-dim); border-color: var(--gold); }
+.toggle input:checked + .toggle-slider::before        { transform: translateX(16px); background: var(--gold); }
 
 /* ============================================================
    PANELS
@@ -382,7 +309,6 @@ body {
   gap: 8px;
   flex-shrink: 0;
 }
-
 .panel-title {
   font-family: var(--font-head);
   font-size: 14px; font-weight: 700;
@@ -390,7 +316,6 @@ body {
   letter-spacing: 1px;
   text-transform: uppercase;
 }
-
 .panel-body {
   flex: 1;
   overflow-y: auto;
@@ -403,7 +328,6 @@ body {
 
 /* ============================================================
    SHARED CARD BASE
-   food-card and ing-card share the same visual language
    ============================================================ */
 .food-card,
 .ing-card {
@@ -412,15 +336,14 @@ body {
   gap: var(--card-gap);
   padding: var(--card-pad);
   background: var(--bg3);
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   border-radius: var(--radius-lg);
   transition: border-color 0.15s, background 0.15s;
 }
 .food-card:hover,
 .ing-card:hover { border-color: var(--border2); background: var(--bg5); }
+.food-card.active { border-color: var(--gold); background: var(--gold-dim2); }
 
-/* top row */
-.food-card-top,
 .ing-card-top {
   display: flex;
   align-items: center;
@@ -428,8 +351,6 @@ body {
   width: 100%;
 }
 
-/* icon */
-.food-icon,
 .ing-card-icon-wrap {
   width: var(--card-icon-s);
   height: var(--card-icon-s);
@@ -442,53 +363,41 @@ body {
   align-items: center;
   justify-content: center;
 }
-.food-icon img,
 .ing-card-icon {
   width: var(--card-icon-s);
   height: var(--card-icon-s);
+  border-radius: var(--radius-md);
+  background: var(--coal-950);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
   object-fit: contain;
 }
 
-/* info block */
-.food-info,
-.ing-card-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-  min-width: 0;
-}
-
-/* name */
-.food-card-name,
+.ing-card-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
 .ing-card-name {
   font-size: 13px; font-weight: 600;
   color: var(--text);
-  font-family: var(--font-head);
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-family: var(--font-head); letter-spacing: 0.3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-
-/* meta / qty row */
-.food-card-meta,
 .ing-card-qty {
   display: flex;
   align-items: center;
   gap: 5px;
-  width: 100%;
   font-size: 12px;
   color: var(--text3);
   font-family: var(--font-head);
   font-weight: 600;
 }
 
-/* bottom divider row */
-.food-card-bottom,
+.ing-card-qty .food-price-input {
+  margin-left: auto;
+  width: 72px;
+  flex-shrink: 0;
+}
 .ing-card-bottom {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: var(--card-gap);
   padding-top: 7px;
   border-top: 1px solid var(--border);
@@ -500,44 +409,10 @@ body {
    ============================================================ */
 .food-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: 1fr;
   gap: var(--card-gap);
-  margin: 0;
   align-content: start;
 }
-
-.food-card { cursor: pointer; position: relative; }
-.food-card.active { border-color: var(--gold); background: var(--gold-dim2); }
-
-.food-card-name { padding-right: 20px; } /* room for remove btn */
-
-.food-card-remove {
-  position: absolute; top: 8px; right: 10px;
-  color: var(--text4); cursor: pointer; font-size: 14px;
-  background: none; border: none;
-  transition: color 0.15s;
-}
-.food-card-remove:hover { color: var(--red); }
-
-.food-qty { font-size: 12px; color: var(--text3); }
-.qty-sep  { color: var(--text4); font-size: 12px; }
-
-/* price input — sits in .food-card-meta, pinned right */
-.food-price-input {
-  width: 72px;
-  margin-left: auto;
-  flex-shrink: 0;
-  background: var(--bg4);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
-  font-size: 11px;
-  font-family: var(--font-ui);
-  transition: border-color 0.15s;
-}
-.food-price-input:focus        { outline: none; border-color: var(--gold); }
-.food-price-input::placeholder { color: var(--text4); }
 
 .add-food-btn {
   width: 100%;
@@ -554,49 +429,177 @@ body {
 .add-food-btn:hover { border-color: var(--gold); color: var(--gold); }
 
 /* ============================================================
+   FOOD CARD NEW LAYOUT
+   ============================================================ */
+.fc-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+}
+
+.fc-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.fc-icon-wrap {
+  width: var(--card-icon-s);
+  height: var(--card-icon-s);
+  border-radius: var(--radius-md);
+  background: var(--coal-950);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.fc-icon-img { width: 100%; height: 100%; object-fit: contain; }
+
+.fc-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.food-card-name {
+  font-size: 13px; font-weight: 600;
+  color: var(--text);
+  font-family: var(--font-head); letter-spacing: 0.3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.fc-tier-row { display: flex; align-items: center; gap: 4px; }
+
+.fc-right {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.fc-ench-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.fc-ench-btn {
+  width: 20px; height: 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border2);
+  background: var(--bg4);
+  font-size: 9px; font-weight: 700;
+  font-family: var(--font-head);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+  padding: 0;
+}
+
+/* enchant colors — inactive */
+.fc-ench-btn.e0 { color: rgba(200,203,208,0.5); border-color: rgba(200,203,208,0.15); }
+.fc-ench-btn.e1 { color: rgba(107,255,145,0.4); border-color: rgba(107,255,145,0.15); }
+.fc-ench-btn.e2 { color: rgba(107,191,255,0.4); border-color: rgba(107,191,255,0.15); }
+.fc-ench-btn.e3 { color: rgba(196,107,255,0.4); border-color: rgba(196,107,255,0.15); }
+.fc-ench-btn.e4 { color: rgba(255,215,0,0.4);   border-color: rgba(255,215,0,0.15);   }
+
+/* enchant colors — active */
+.fc-ench-btn.e0.active { background: var(--bg5);  border-color: var(--border3);              color: var(--coal-50); }
+.fc-ench-btn.e1.active { background: #122a18;     border-color: rgba(107,255,145,0.5);       color: #6bff91; }
+.fc-ench-btn.e2.active { background: #0e1e30;     border-color: rgba(107,191,255,0.5);       color: #6bbfff; }
+.fc-ench-btn.e3.active { background: #1e1030;     border-color: rgba(196,107,255,0.5);       color: #c46bff; }
+.fc-ench-btn.e4.active { background: #2a2400;     border-color: rgba(255,215,0,0.5);         color: #ffd700; }
+
+.food-card-remove {
+  background: none; border: none;
+  color: var(--text4); cursor: pointer;
+  font-size: 14px; line-height: 1;
+  padding: 0; margin-top: 2px;
+  transition: color 0.15s;
+}
+.food-card-remove:hover { color: var(--red); }
+
+.fc-sep { width: 100%; height: 1px; background: var(--border); margin: 2px 0; }
+
+.fc-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  width: 100%;
+}
+
+.fc-input-group { display: flex; flex-direction: column; gap: 3px; }
+
+.fc-input-lbl {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  font-family: var(--font-head); color: var(--text4);
+}
+
+.fc-input {
+  background: var(--bg4);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 11px; font-family: var(--font-ui);
+  width: 100%; outline: none;
+  transition: border-color 0.15s;
+}
+.fc-input:focus { border-color: var(--gold); }
+
+/* ============================================================
    FOOD CARD STAT GRID
    ============================================================ */
+.food-card-bottom {
+  display: flex; flex-direction: column;
+  gap: var(--card-gap);
+  padding-top: 7px;
+  border-top: 1px solid var(--border);
+  width: 100%;
+}
+
 .fc-stats-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   width: 100%;
 }
 
 .fc-stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
   padding: 4px 5px;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   gap: 2px;
 }
-.fc-stat.pos     { background: var(--green-dim);  border-color: var(--green-border); }
-.fc-stat.neg     { background: var(--red-dim);    border-color: var(--red-border); }
-.fc-stat.neutral,
-.fc-stat.loading { background: var(--bg4);        border-color: var(--border2); }
+.fc-stat.pos     { background: var(--green-dim); border-color: var(--green-border); }
+.fc-stat.neg     { background: var(--red-dim);   border-color: var(--red-border); }
+.fc-stat.neutral { background: var(--bg4);       border-color: var(--border2); }
 
 .fc-stat-lbl {
   font-size: 8px; font-weight: 700;
   letter-spacing: 0.8px; text-transform: uppercase;
   font-family: var(--font-head); line-height: 1;
 }
-.fc-stat.pos     .fc-stat-lbl { color: var(--green); }
-.fc-stat.neg     .fc-stat-lbl { color: var(--red); }
-.fc-stat.neutral .fc-stat-lbl,
-.fc-stat.loading .fc-stat-lbl { color: var(--text4); }
-
 .fc-stat-val {
   font-size: 11px; font-weight: 700;
   font-family: var(--font-head); line-height: 1;
   white-space: nowrap;
 }
-.fc-stat.pos     .fc-stat-val { color: var(--green); }
-.fc-stat.neg     .fc-stat-val { color: var(--red); }
-.fc-stat.neutral .fc-stat-val,
-.fc-stat.loading .fc-stat-val { color: var(--text4); }
+.fc-stat.pos     .fc-stat-lbl,
+.fc-stat.pos     .fc-stat-val  { color: var(--green); }
+.fc-stat.neg     .fc-stat-lbl,
+.fc-stat.neg     .fc-stat-val  { color: var(--red); }
+.fc-stat.neutral .fc-stat-lbl,
+.fc-stat.neutral .fc-stat-val  { color: var(--text4); }
 
 /* ============================================================
    INGREDIENTS GRID
@@ -605,16 +608,13 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: var(--card-gap);
-  margin: 0;
   align-content: start;
 }
 
 .ing-stat-box {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
   padding: 3px 6px;
   background: var(--bg4);
   border: 1px solid var(--border2);
@@ -623,24 +623,20 @@ body {
 }
 
 /* ============================================================
-   SHARED: PRICE INPUT (enchant bar / ingredient inputs)
+   SHARED: PRICE / STAT BOXES
    ============================================================ */
-.price-input,
-.input-with-tag input[type="number"] {
+.price-input {
   background: var(--bg4);
   border: 1px solid var(--border2);
   color: var(--text);
   padding: 4px 7px;
   border-radius: var(--radius-md);
-  font-size: 12px;
-  font-family: var(--font-ui);
+  font-size: 12px; font-family: var(--font-ui);
+  width: 78px;
   transition: border-color 0.15s;
 }
-.price-input:focus,
-.input-with-tag input[type="number"]:focus { outline: none; border-color: var(--gold); }
-
-.price-input        { width: 78px; }
-.price-input.manual { border-color: rgba(201,168,76,0.4); }
+.price-input:focus        { outline: none; border-color: var(--gold); }
+.price-input.manual       { border-color: rgba(201,168,76,0.4); }
 
 .input-with-tag { display: flex; align-items: center; gap: 6px; }
 .input-with-tag label {
@@ -648,88 +644,79 @@ body {
   white-space: nowrap; min-width: 76px;
   font-family: var(--font-ui);
 }
-.input-with-tag input[type="number"] { width: 82px; }
+.input-with-tag input[type="number"] {
+  background: var(--bg4); border: 1px solid var(--border2);
+  color: var(--text); padding: 4px 7px;
+  border-radius: var(--radius-md);
+  font-size: 12px; font-family: var(--font-ui);
+  width: 82px; transition: border-color 0.15s;
+}
+.input-with-tag input[type="number"]:focus { outline: none; border-color: var(--gold); }
 
 .market-inputs-row { display: flex; gap: 10px; flex-wrap: wrap; }
 .market-inputs-row .input-with-tag label { min-width: 44px; }
 
-/* ============================================================
-   SHARED: STAT BOXES (legacy — analysis panel)
-   ============================================================ */
 .stat-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
   padding: 3px 6px;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  gap: 1px;
-  flex: 1;
+  gap: 1px; flex: 1;
 }
-.stat-box.pos     { background: var(--green-dim);  border-color: var(--green-border); }
-.stat-box.neg     { background: var(--red-dim);    border-color: var(--red-border); }
-.stat-box.neutral { background: var(--bg4);        border-color: var(--border2); }
+.stat-box.pos     { background: var(--green-dim); border-color: var(--green-border); }
+.stat-box.neg     { background: var(--red-dim);   border-color: var(--red-border); }
+.stat-box.neutral { background: var(--bg4);       border-color: var(--border2); }
 
 .stat-box-label {
   font-size: 8px; font-weight: 700;
   letter-spacing: 0.8px; text-transform: uppercase;
   font-family: var(--font-head); line-height: 1;
 }
-.stat-box.pos     .stat-box-label { color: var(--green); }
-.stat-box.neg     .stat-box-label { color: var(--red); }
-.stat-box.neutral .stat-box-label { color: var(--text4); }
-
 .stat-box-val {
   font-size: 12px; font-weight: 700;
   font-family: var(--font-head); line-height: 1;
   white-space: nowrap;
 }
-.stat-box.pos     .stat-box-val { color: var(--green); }
-.stat-box.neg     .stat-box-val { color: var(--red); }
-.stat-box.neutral .stat-box-val { color: var(--text4); }
+.stat-box.pos     .stat-box-label,
+.stat-box.pos     .stat-box-val   { color: var(--green); }
+.stat-box.neg     .stat-box-label,
+.stat-box.neg     .stat-box-val   { color: var(--red); }
+.stat-box.neutral .stat-box-label,
+.stat-box.neutral .stat-box-val   { color: var(--text4); }
 
 /* ============================================================
-   PRICE BADGE
-   ============================================================ */
-.price-badge { font-size: 10px; padding: 1px 5px; border-radius: 3px; margin-left: 3px; }
-.price-badge.api    { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
-.price-badge.manual { background: var(--gold-dim);  color: var(--gold);  border: 1px solid rgba(201,168,76,0.25); }
-
-/* ============================================================
-   TIER BADGES
+   TIER & ENCHANT BADGES
    ============================================================ */
 .tier-badge {
   padding: 1px 7px;
   border-radius: var(--radius-sm);
   font-size: 11px; font-weight: 600;
-  font-family: var(--font-head);
-  letter-spacing: 0.3px;
+  font-family: var(--font-head); letter-spacing: 0.3px;
   flex-shrink: 0;
 }
 .t1 { background: #3a3a3a; color: #aaa; }
-.t2 { background: #2e3a22; color: #8fba68; }
-.t3 { background: #2e3a22; color: #8fba68; }
+.t2, .t3 { background: #2e3a22; color: #8fba68; }
 .t4 { background: #1e3347; color: #7ab8d8; }
 .t5 { background: #4a1510; color: #d47a72; }
 .t6 { background: #6b3a12; color: #e0a060; }
 .t7 { background: #5a4a18; color: #d4b050; }
 .t8 { background: #4a4a4a; color: #e0e0e0; }
 
-/* ============================================================
-   ENCHANT BADGES
-   ============================================================ */
 .enchant-badge {
   padding: 1px 7px;
   border-radius: var(--radius-sm);
   font-size: 11px; font-weight: 600;
-  font-family: var(--font-head);
-  flex-shrink: 0;
+  font-family: var(--font-head); flex-shrink: 0;
 }
 .e1 { background: #122a18; color: #6bff91; border: 1px solid rgba(107,255,145,0.35); }
 .e2 { background: #0e1e30; color: #6bbfff; border: 1px solid rgba(107,191,255,0.35); }
 .e3 { background: #1e1030; color: #c46bff; border: 1px solid rgba(196,107,255,0.35); }
 .e4 { background: #2a2400; color: #ffd700; border: 1px solid rgba(255,215,0,0.35); }
+
+.price-badge { font-size: 10px; padding: 1px 5px; border-radius: 3px; margin-left: 3px; }
+.price-badge.api    { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+.price-badge.manual { background: var(--gold-dim);  color: var(--gold);  border: 1px solid rgba(201,168,76,0.25); }
 
 /* ============================================================
    ANALYSIS PANEL
@@ -737,10 +724,8 @@ body {
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
 
 .stat-card {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 10px 12px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 10px 12px;
 }
 .stat-label {
   font-size: 10px; color: var(--text4);
@@ -749,8 +734,7 @@ body {
 }
 .stat-value {
   font-size: 20px; font-weight: 700;
-  font-family: var(--font-head);
-  margin-top: 4px;
+  font-family: var(--font-head); margin-top: 4px;
 }
 .stat-value.gold  { color: var(--gold); }
 .stat-value.green { color: var(--green); }
@@ -760,8 +744,7 @@ body {
 
 .analysis-row {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 5px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 5px 0; border-bottom: 1px solid var(--border);
 }
 .analysis-row-label { font-size: 12px; color: var(--text2); }
 .analysis-row-val   { font-size: 12px; font-weight: 600; color: var(--text); font-family: var(--font-head); }
@@ -785,10 +768,8 @@ body {
 .verdict-desc { font-size: 11px; color: var(--text2); margin-top: 4px; }
 
 .total-profit-box {
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-lg);
-  padding: 12px 14px; margin-top: 12px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius-lg); padding: 12px 14px; margin-top: 12px;
 }
 .total-profit-label {
   font-size: 10px; color: var(--text4);
@@ -804,110 +785,74 @@ body {
 .custom-select { position: relative; width: 140px; user-select: none; }
 
 .select-trigger {
-  background: var(--bg4);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  padding: 6px 12px;
-  border-radius: var(--radius-md);
-  font-size: 12px;
-  cursor: pointer;
-  display: flex; justify-content: space-between; align-items: center;
-  font-family: var(--font-ui);
-  transition: border-color 0.2s, background 0.2s;
+  background: var(--bg4); border: 1px solid var(--border2);
+  color: var(--text); padding: 6px 12px;
+  border-radius: var(--radius-md); font-size: 12px;
+  cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--font-ui); transition: border-color 0.2s, background 0.2s;
 }
 .select-trigger:hover { border-color: var(--gold); background: var(--bg5); }
 
 .select-menu {
-  position: absolute;
-  top: calc(100% + 4px); left: 0;
-  width: 100%;
-  background: var(--bg2);
-  border: 1px solid var(--gold);
-  border-radius: var(--radius-md);
-  z-index: 9999;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  overflow: hidden;
+  position: absolute; top: calc(100% + 4px); left: 0;
+  width: 100%; background: var(--bg2);
+  border: 1px solid var(--gold); border-radius: var(--radius-md);
+  z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.6); overflow: hidden;
 }
-
 .select-option {
-  padding: 8px 12px;
-  color: var(--text2);
-  font-size: 12px;
-  cursor: pointer;
+  padding: 8px 12px; color: var(--text2);
+  font-size: 12px; cursor: pointer;
   transition: background 0.12s, color 0.12s;
 }
 .select-option:hover { background: var(--gold-dim); color: var(--gold); }
-
 .arrow { font-size: 9px; color: var(--gold); margin-left: 8px; }
 
 /* ============================================================
    BUTTONS
    ============================================================ */
 .btn-fetch {
-  background: var(--gold);
-  color: var(--coal-950);
-  border: none;
-  padding: 6px 14px;
+  background: var(--gold); color: var(--coal-950);
+  border: none; padding: 6px 14px;
   border-radius: var(--radius-md);
   font-size: 12px; font-weight: 600;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 6px;
-  font-family: var(--font-head);
-  letter-spacing: 0.5px;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-head); letter-spacing: 0.5px;
   transition: background 0.2s;
 }
 .btn-fetch:hover   { background: var(--gold2); }
 .btn-fetch.loading { opacity: 0.6; cursor: not-allowed; }
 
 .btn-add {
-  flex: 1;
-  background: var(--gold);
-  color: var(--coal-950);
-  border: none;
-  padding: 8px;
-  border-radius: var(--radius-md);
-  font-size: 13px; font-weight: 700;
-  cursor: pointer;
-  font-family: var(--font-head);
-  letter-spacing: 0.5px;
+  flex: 1; background: var(--gold); color: var(--coal-950);
+  border: none; padding: 8px; border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  font-family: var(--font-head); letter-spacing: 0.5px;
   transition: background 0.2s;
 }
 .btn-add:hover { background: var(--gold2); }
 
 .btn-cancel {
-  background: var(--bg4);
-  color: var(--text2);
-  border: 1px solid var(--border2);
-  padding: 8px 14px;
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  cursor: pointer;
-  font-family: var(--font-head);
+  background: var(--bg4); color: var(--text2);
+  border: 1px solid var(--border2); padding: 8px 14px;
+  border-radius: var(--radius-md); font-size: 13px;
+  cursor: pointer; font-family: var(--font-head);
   transition: border-color 0.15s, color 0.15s;
 }
 .btn-cancel:hover { border-color: var(--border3); color: var(--text); }
 
 .btn-back {
-  background: transparent;
-  border: none;
-  color: var(--text4);
-  font-size: 12px;
-  cursor: pointer;
-  padding: 4px 0;
-  font-family: var(--font-ui);
-  transition: color 0.15s;
+  background: transparent; border: none;
+  color: var(--text4); font-size: 12px;
+  cursor: pointer; padding: 4px 0;
+  font-family: var(--font-ui); transition: color 0.15s;
 }
 .btn-back:hover { color: var(--text2); }
 
 .btn-delete {
-  background: var(--red-dim);
-  color: var(--red);
-  border: 1px solid var(--red-border);
-  padding: 8px 14px;
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  cursor: pointer;
-  font-family: var(--font-head);
+  background: var(--red-dim); color: var(--red);
+  border: 1px solid var(--red-border); padding: 8px 14px;
+  border-radius: var(--radius-md); font-size: 13px;
+  cursor: pointer; font-family: var(--font-head);
   transition: background 0.15s, border-color 0.15s;
   margin-right: auto;
 }
@@ -922,122 +867,100 @@ body {
   z-index: 200;
   display: flex; align-items: center; justify-content: center;
 }
-
 .modal {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-xl);
-  padding: 20px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius-xl); padding: 20px;
   width: 340px; max-width: 95vw;
 }
-
 .modal-title {
   font-family: var(--font-head);
   font-size: 16px; font-weight: 700;
-  color: var(--gold);
-  letter-spacing: 1px;
-  margin-bottom: 14px;
+  color: var(--gold); letter-spacing: 1px; margin-bottom: 14px;
 }
-
-.modal-selected-name {
-  font-family: var(--font-head);
-  font-size: 16px; font-weight: 700;
-  color: var(--gold);
-  margin-bottom: 14px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-}
-
 .modal-input {
-  width: 100%;
-  background: var(--bg4);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  padding: 8px 10px;
-  border-radius: var(--radius-md);
+  width: 100%; background: var(--bg4);
+  border: 1px solid var(--border2); color: var(--text);
+  padding: 8px 10px; border-radius: var(--radius-md);
   font-size: 13px; font-family: var(--font-ui);
-  margin-bottom: 8px;
-  transition: border-color 0.15s;
+  margin-bottom: 8px; transition: border-color 0.15s;
 }
 .modal-input:focus { outline: none; border-color: var(--gold); }
-
-.modal-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
-.modal-row label {
-  font-size: 11px; color: var(--text4);
-  text-transform: uppercase; letter-spacing: 0.5px;
-  font-family: var(--font-head);
-  min-width: 64px; white-space: nowrap;
-}
-
-.modal-small-input {
-  background: var(--bg4);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  padding: 6px 8px;
-  border-radius: var(--radius-md);
-  font-size: 12px; font-family: var(--font-ui);
-  width: 80px;
-  transition: border-color 0.15s;
-}
-.modal-small-input:focus { outline: none; border-color: var(--gold); }
-
 .modal-actions { display: flex; gap: 8px; margin-top: 4px; }
 
 .food-suggestions {
-  background: var(--bg4);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-md);
-  margin-bottom: 10px;
-  max-height: 150px; overflow-y: auto;
-  display: none;
+  background: var(--bg4); border: 1px solid var(--border2);
+  border-radius: var(--radius-md); margin-bottom: 10px;
+  max-height: 150px; overflow-y: auto; display: none;
 }
 .food-suggestions.open { display: block; }
-
 .food-sugg-item {
-  padding: 7px 10px;
-  font-size: 12px; color: var(--text2);
-  cursor: pointer;
-  transition: background 0.1s, color 0.1s;
+  padding: 7px 10px; font-size: 12px; color: var(--text2);
+  cursor: pointer; transition: background 0.1s, color 0.1s;
 }
 .food-sugg-item:hover { background: var(--bg5); color: var(--text); }
 
+/* ============================================================
+   ENCHANT BAR (analysis)
+   ============================================================ */
+.enchant-bar {
+  display: flex; align-items: flex-start;
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  padding: 10px 20px; flex-shrink: 0;
+  flex-wrap: wrap; min-height: 56px;
+}
+.enchant-section { display: flex; flex-direction: column; gap: 6px; padding-right: 16px; }
+.enchant-label {
+  font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; color: var(--text4); text-transform: uppercase;
+}
+.enchant-sep { width: 1px; background: var(--border2); align-self: stretch; margin: 0 16px; }
+
 .etch-opt-group { display: flex; gap: 5px; }
 .etch-opt {
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border2);
-  background: var(--bg4);
-  color: var(--text3);
-  font-size: 12px; cursor: pointer; font-weight: 600;
+  padding: 4px 10px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border2); background: var(--bg4);
+  color: var(--text3); font-size: 12px; cursor: pointer; font-weight: 600;
   font-family: var(--font-head);
   transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 .etch-opt:hover  { border-color: var(--gold); color: var(--gold); }
 .etch-opt.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
 
+.sauce-results-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.sauce-badge {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 2px; padding: 6px 12px;
+  border-radius: var(--radius-md); border: 1px solid var(--border2);
+  background: var(--bg3); min-width: 70px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.sauce-name    { font-family: var(--font-head); font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; }
+.sauce-cost    { font-size: 10px; color: var(--text4); }
+.sauce-diff    { font-family: var(--font-head); font-size: 13px; font-weight: 700; color: var(--red); }
+.sauce-verdict { font-family: var(--font-head); font-size: 10px; font-weight: 700; color: var(--red); text-transform: uppercase; }
+
+.sauce-badge.is-profit                { border-color: var(--green-border); background: var(--green-dim); }
+.sauce-badge.is-profit .sauce-name,
+.sauce-badge.is-profit .sauce-diff,
+.sauce-badge.is-profit .sauce-verdict { color: var(--green); }
+
 /* ============================================================
    FOOTER
    ============================================================ */
 .footer {
-  height: var(--footer-h);
-  background: var(--bg2);
+  height: var(--footer-h); background: var(--bg2);
   border-top: 1px solid var(--border);
   display: flex; align-items: center;
-  padding: 0 16px; gap: 16px;
-  flex-shrink: 0;
+  padding: 0 16px; gap: 16px; flex-shrink: 0;
 }
-.footer-item { font-size: 10px; color: var(--text4); display: flex; align-items: center; gap: 5px; }
-.status-dot       { width: 6px; height: 6px; border-radius: 50%; }
+.footer-item  { font-size: 10px; color: var(--text4); display: flex; align-items: center; gap: 5px; }
+.status-dot   { width: 6px; height: 6px; border-radius: 50%; }
 .status-dot.green { background: var(--green); }
 
 /* ============================================================
-   STATUS
+   STATUS / UTILS
    ============================================================ */
 .fetch-status     { font-size: 11px; color: var(--text4); }
 .fetch-status.ok  { color: var(--green); }
 .fetch-status.err { color: var(--red); }
-
-/* ============================================================
-   UTILS
-   ============================================================ */
-.hidden { display: none !important; }
+.hidden           { display: none !important; }

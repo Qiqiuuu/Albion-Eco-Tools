@@ -13,6 +13,12 @@ pub fn Config(
     let data = use_context::<ReadSignal<UserData>>().expect("No user data set");
     let set_data = use_context::<WriteSignal<UserData>>().expect("No user data set");
 
+    let silver_fee = Memo::new(move |_| data.with(|d| d.silver_fee));
+    let use_focus = Memo::new(move |_| data.with(|d| d.use_focus));
+    let use_premium = Memo::new(move |_| data.with(|d| d.use_premium));
+    let city = Memo::new(move |_| data.with(|d| d.city.clone()));
+    let avg = Memo::new(move |_| data.with(|d| d.avg.clone()));
+
     let (is_avg_open, set_is_avg_open) = signal(false);
     let (is_city_open, set_is_city_open) = signal(false);
 
@@ -23,7 +29,7 @@ pub fn Config(
                     <label class="toggle">
                         <input
                             type="checkbox"
-                            prop:checked= move || data.get().use_premium
+                            prop:checked= move || use_premium.get()
                             on:change=move |ev| {
                             let val = event_target_checked(&ev);
                             set_data.update(|d| d.use_premium = val);
@@ -41,7 +47,7 @@ pub fn Config(
                     <label class="toggle">
                         <input
                             type="checkbox"
-                            prop:checked=move || data.get().use_focus
+                            prop:checked=move || use_focus.get()
                             on:change=move |ev| {
                             let val = event_target_checked(&ev);
                             set_data.update(|d| d.use_focus = val);
@@ -59,7 +65,7 @@ pub fn Config(
                     <input
                         class="setting-input"
                         type="number"
-                        prop:value=move || data.get().silver_fee
+                        prop:value=move || silver_fee.get()
                         min="0" max="1000"
                         on:input=move |ev| {
                         let val = event_target_value(&ev).parse::<u32>().unwrap_or(0);
@@ -75,7 +81,7 @@ pub fn Config(
                     <span class="setting-label">"Average Price"</span>
                     <div class="custom-select">
                         <div class="select-trigger" on:click=move |_| set_is_avg_open.update(|v| *v = !*v)>
-                            {move || format!("{}", data.get().avg)}
+                            {move || format!("{:?}", avg.get())}
                             <span class="arrow">"▼"</span>
                         </div>
                         <div class="select-menu" class:hidden=move || !is_avg_open.get()>
@@ -107,7 +113,7 @@ pub fn Config(
                     <span class="setting-label">"City"</span>
                     <div class="custom-select">
                         <div class="select-trigger" on:click=move |_| set_is_city_open.update(|v| *v = !*v)>
-                            {move || format!("{}", data.get().city)}
+                            {move || format!("{:?}", city.get())}
                             <span class="arrow">"▼"</span>
                         </div>
                         <div class="select-menu" class:hidden=move || !is_city_open.get()>

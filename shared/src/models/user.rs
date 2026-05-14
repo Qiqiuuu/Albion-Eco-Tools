@@ -1,13 +1,15 @@
 use serde::{Deserialize, Serialize};
 use crate::models::config::{ActiveTab, AveragePrice, Cities};
-use crate::models::items::TrackedFood;
+use crate::models::items::{TrackedFoodMap};
 use crate::models::specializations::{Category, CategoryId, Spec, SpecId};
 use crate::models::specializations::CategoryId::Chief;
+
+
 
 #[derive(Debug, Clone, Serialize, Deserialize,PartialEq)]
 pub struct UserData {
     pub specializations: Vec<Category>,
-    pub tracked_foods: Vec<TrackedFood>,
+    pub tracked_foods: Vec<TrackedFoodMap>,
     pub active_tab: ActiveTab,
     pub active_category: CategoryId,
     pub use_premium: bool,
@@ -47,25 +49,21 @@ impl UserData {
         }
     }
 
-    pub fn add_tracked_food(&mut self, food: TrackedFood) {
-        if let Some(existing) = self.tracked_foods.iter_mut().find(|f|
-            f.item.unique_name == food.item.unique_name && f.item.enchantment == food.item.enchantment
-        ) {
-            existing.quantity += food.quantity;
-        } else {
-            self.tracked_foods.push(food);
+    pub fn add_tracked_food(&mut self, food_map: TrackedFoodMap) {
+        if !self.tracked_foods.iter().any(|f| f.base_name == food_map.base_name ){
+            self.tracked_foods.push(food_map);
         }
     }
 
-    pub fn remove_tracked_food(&mut self, index: usize) {
-        if index < self.tracked_foods.len() {
-            self.tracked_foods.remove(index);
-        }
+    pub fn remove_tracked_food(&mut self, base_name: &str) {
+        self.tracked_foods.retain(|f| f.base_name != base_name);
     }
 
-    pub fn update_tracked_food(&mut self, index: usize, food: TrackedFood) {
-        if let Some(entry) = self.tracked_foods.get_mut(index) {
-            *entry = food;
+    pub fn update_tracked_food(&mut self, food_map: TrackedFoodMap) {
+        if let Some(index) = self.tracked_foods.iter().position(|f| {
+            f.base_name == food_map.base_name
+        }) {
+            self.tracked_foods[index] = food_map;
         }
     }
 }

@@ -293,7 +293,7 @@ pub fn run() -> anyhow::Result<ItemRegistry> {
                                vec![ing("T7_FISH_FRESHWATER_FOREST_RARE", 1), ing("T8_PUMPKIN", 6), ing("T8_YARROW", 6), ing("T8_MILK", 6)],
                                SpecId::StewChef, Station::Cook, [27, 27, 27], [652,1253,2454,6056]));
 
-    items.extend(food_enchants("T4_MEAL_STEW_AVALON", "Avalonian Beef Stew", Tier::T4, 128, 10,
+    items.extend(food_enchants("T4_MEAL_STEW_AVALON", "Avalonian Goat Stew", Tier::T4, 128, 10,
                                vec![ing("T4_MEAT", 8), ing("T4_TURNIP", 4), ing("T1_CARROT", 4), ing("QUESTITEM_TOKEN_AVALON", 10)],
                                SpecId::StewChef, Station::Cook, [10, 10, 10], [58,81,125,259]));
     items.extend(food_enchants("T6_MEAL_STEW_AVALON", "Avalonian Mutton Stew", Tier::T6, 384, 10,
@@ -377,6 +377,78 @@ pub fn run() -> anyhow::Result<ItemRegistry> {
     items.extend(food_enchants("T8_MEAL_SANDWICH_AVALON", "Avalonian Beef Sandwich", Tier::T8, 1080, 10,
                                vec![ing("T8_MEAT", 72), ing("T4_BREAD", 36), ing("T8_BUTTER", 18), ing("QUESTITEM_TOKEN_AVALON", 90)],
                                SpecId::SandwichChef, Station::Cook, [90, 90, 90], [494,694,1094,2295]));
+
+    // --- SALADS  ---
+
+
+    items.push(
+        ItemEntity::new("T1_MEAL_SALAD_SEAWEED", "Seaweed Salad", Tier::T1, 10)
+            .with_category(Item::Consumable(Consumable::Food))
+            .with_station(Station::Cook)
+            .with_recipe(Recipe::new(1, vec![ing("T1_SEAWEED", 10)]))
+            .with_specialization(SpecId::SaladChef)
+            .with_base_focus(4),
+    );
+
+    items.extend(food_enchants(
+        "T2_MEAL_SALAD", "Bean Salad", Tier::T2, 64, 10,
+        vec![ing("T1_CARROT", 8), ing("T2_BEAN", 8)],
+        SpecId::SaladChef, Station::Cook,
+        [10, 10, 10],
+        [56, 78, 123, 256],
+    ));
+
+    items.extend(food_enchants(
+        "T4_MEAL_SALAD", "Turnip Salad", Tier::T4, 192, 10,
+        vec![ing("T3_WHEAT", 24), ing("T4_TURNIP", 24)],
+        SpecId::SaladChef, Station::Cook,
+        [30, 30, 30],
+        [168,235,	368,769],
+    ));
+
+    items.extend(food_enchants(
+        "T6_MEAL_SALAD", "Potato Salad", Tier::T6, 576, 10,
+        vec![ing("T6_POTATO", 72), ing("T5_CABBAGE", 72)],
+        SpecId::SaladChef, Station::Cook,
+        [90, 90, 90],
+        [504,704,1105,2306],
+    ));
+
+
+    items.extend(food_enchants(
+        "T2_MEAL_SALAD_FISH", "Shallowshore Squid Salad", Tier::T2, 90, 1,
+        vec![ing("T3_FISH_SALTWATER_ALL_RARE", 1), ing("T2_BEAN", 1), ing("T2_AGARIC", 1)],
+        SpecId::SaladChef, Station::Cook,
+        [3, 3, 3],
+        [77,144,278,678],
+    ));
+
+    items.extend(food_enchants(
+        "T4_MEAL_SALAD_FISH", "Midwater Octopus Salad", Tier::T4, 260, 1,
+        vec![
+            ing("T5_FISH_SALTWATER_ALL_RARE", 1),
+            ing("T4_TURNIP", 2),
+            ing("T4_MEAT", 2),
+            ing("T4_BURDOCK", 2),
+        ],
+        SpecId::SaladChef, Station::Cook,
+        [9, 9, 9],
+        [231,432,	832	,2033],
+    ));
+
+    items.extend(food_enchants(
+        "T6_MEAL_SALAD_FISH", "Deepwater Kraken Salad", Tier::T6, 750, 1,
+        vec![
+            ing("T7_FISH_SALTWATER_ALL_RARE", 1),
+            ing("T6_POTATO", 6),
+            ing("T6_MEAT", 6),
+            ing("T6_FOXGLOVE", 6),
+        ],
+        SpecId::SaladChef, Station::Cook,
+        [27, 27, 27],
+        [672,1272	,2473,	6076],
+    ));
+
 
     let registry = ItemRegistry {
         items: items.into_iter().map(|i| (i.unique_name.clone(), i)).collect(),

@@ -76,7 +76,6 @@ pub fn crafting_calculations(context: &CraftingContext) -> Option<CraftingResult
             (Some(base_focus), Some(spec_id)) => {
                 let spec_points = calculate_total_focus_points(context.user_specs, spec_id);
                 let factor      = 0.5_f64.powf(spec_points as f64 / 10000.0);
-                print!("{}", factor);
                 let focus_cost  = (base_focus as f64 * factor).floor();
                 if focus_cost > 0.0 { (profit / focus_cost,focus_cost) } else { (0.0,0.0) }
 

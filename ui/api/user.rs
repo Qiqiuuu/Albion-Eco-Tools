@@ -1,7 +1,7 @@
 use tauri_sys::core::invoke;
 use aet_shared::models::user::UserData;
 use aet_shared::models::config::{ActiveTab, AveragePrice, Cities};
-use aet_shared::models::items::TrackedFood;
+use aet_shared::models::items::{TrackedFood, TrackedFoodMap};
 use aet_shared::models::specializations::{CategoryId, SpecId};
 
 
@@ -70,17 +70,26 @@ pub async fn send_avg_update(avg_updated: AveragePrice) {
     invoke::<()>("update_avg", &Args { new_avg: avg_updated }).await;
 }
 
-pub async fn send_add_tracked_food(new_tracked_food: TrackedFood) {
+pub async fn send_add_tracked_food(new_tracked_food: TrackedFoodMap) {
     #[derive(serde::Serialize)]
     #[serde(rename_all = "camelCase")]
-    struct Args { new_food: TrackedFood }
-    invoke::<()>("add_tracked_food", &Args { new_food: new_tracked_food }).await;
+    struct Args { new_food_map: TrackedFoodMap }
+    invoke::<()>("add_tracked_food", &Args { new_food_map: new_tracked_food }).await;
 }
 
-pub async fn send_remove_tracked_food(new_food_to_remove: TrackedFood) {
+pub async fn send_remove_tracked_food(new_food_to_remove: String ){
     #[derive(serde::Serialize)]
     #[serde(rename_all = "camelCase")]
-    struct Args { food_to_remove: TrackedFood }
-    invoke::<()>("remove_tracked_food", &Args { food_to_remove: new_food_to_remove }).await;
+    struct Args { food_base_name: String }
+    invoke::<()>("remove_tracked_food", &Args { food_base_name: new_food_to_remove }).await;
 }
+
+
+pub async fn send_update_tracked_food(new_tracked_food: TrackedFoodMap){
+    #[derive(serde::Serialize)]
+    #[serde(rename_all = "camelCase")]
+    struct Args { updated_food_map: TrackedFoodMap }
+    invoke::<()>("update_tracked_food", &Args { updated_food_map: new_tracked_food }).await;
+}
+
 

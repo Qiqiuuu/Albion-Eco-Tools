@@ -12,6 +12,7 @@ pub struct CityPrice {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 pub struct ItemPrice {
     pub current: u32,
+    pub demand: u32,
     pub cities: HashMap<String, CityPrice>,
 }
 

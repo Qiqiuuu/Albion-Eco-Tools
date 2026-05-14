@@ -19,11 +19,17 @@ pub fn Enchant(
 
     let set_prices = use_context::<WriteSignal<PriceMap>>().expect("No set_prices context");
 
+    let silver_fee = Memo::new(move |_| data.with(|d| d.silver_fee));
+    let use_focus = Memo::new(move |_| data.with(|d| d.use_focus));
+    let use_premium = Memo::new(move |_| data.with(|d| d.use_premium));
+
 
     let all_results = LocalResource::new(move || {
-        let use_focus = data.get().use_focus;
-        let silver_fee = data.get().silver_fee;
-        let use_premium = data.get().use_premium;
+        let use_focus = use_focus.get();
+        let silver_fee = silver_fee.get();
+        let use_premium = use_premium.get();
+        let _current_prices = prices.get();
+
         async move {
             let mut results = HashMap::new();
             for sauce in FishSauce::iter() {

@@ -38,6 +38,7 @@ pub fn run() -> anyhow::Result<()> {
             unique_name.clone(),
             ItemPrice {
                 current: 0,
+                demand: 0,
                 cities: city_data,
             },
         );

@@ -24,6 +24,8 @@ pub fn App() -> impl IntoView {
     Effect::new(move |_| { if let Some(d) = items_res.get()  { set_items.set(d); } });
     Effect::new(move |_| { if let Some(d) = data_res.get()  { set_data.set(d); } });
 
+    let active_tab = Memo::new(move |_| data.with(|d| d.active_tab.clone()));
+
 
     provide_context(prices);
     provide_context(set_prices);
@@ -37,7 +39,7 @@ pub fn App() -> impl IntoView {
             <Topbar/>
             <div class="main">
                 <Sidebar/>
-                {move || match data.get().active_tab {
+                {move || match active_tab.get() {
                     ActiveTab::Cooking => view! {<CookingContent/>}.into_view(),
                     ActiveTab::Farming   => todo!(),
                     ActiveTab::Gathering => todo!(),

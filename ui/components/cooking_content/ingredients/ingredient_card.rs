@@ -44,10 +44,9 @@ pub fn IngredientCard(
                 </div>
             </div>
             <div class="ing-card-bottom" on:click=move |ev| ev.stop_propagation()>
-
-                <div class="ing-stat-box">
-                    <span class="stat-box-label">"SUBTOTAL"</span>
-                    <span class="stat-box-val" style="color:var(--text2)">
+                <div class="fc-stat neutral" style="width:100%">
+                    <span class="fc-stat-lbl">"SUBTOTAL"</span>
+                    <span class="fc-stat-val" style="color:var(--text2)">
                         {move || fmt_silver(price_of(key_total.clone(),prices) as f64 * total_count as f64)}
                     </span>
                 </div>

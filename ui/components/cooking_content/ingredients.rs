@@ -1,16 +1,12 @@
 pub mod ingredient_card;
 
 use std::collections::HashMap;
-use leptos::prelude::{ElementChild, For, Show, StyleAttribute};
-use leptos::{component, logging, view, IntoView};
-use leptos::prelude::{use_context, ClassAttribute, Get, Memo, ReadSignal};
+use leptos::prelude::*;
 use aet_shared::models::items::ItemRegistry;
-use aet_shared::models::prices::PriceMap;
 use aet_shared::models::user::UserData;
 use crate::components::cooking_content::ingredients::ingredient_card::IngredientCard;
-use crate::utils::fmt_silver;
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct AggregatedIngredient {
     pub unique_name: String,
     pub display_name: String,
@@ -19,53 +15,48 @@ pub struct AggregatedIngredient {
 
 #[component]
 pub fn Ingredients() -> impl IntoView {
-    let prices     = use_context::<ReadSignal<PriceMap>>().expect("No prices context");
-    let data       = use_context::<ReadSignal<UserData>>().expect("No user data context");
-    let items      = use_context::<ReadSignal<ItemRegistry>>().expect("No items data set");
+    let data = use_context::<ReadSignal<UserData>>().expect("No user data context");
+    let items = use_context::<ReadSignal<ItemRegistry>>().expect("No items data set");
 
     let tracked_foods = Memo::new(move |_| data.get().tracked_foods);
 
     let aggregated_ingredients = Memo::new(move |_| {
+        let mut totals: HashMap<String, (String, u32)> = HashMap::new();
+        let food_data = tracked_foods.get();
         let registry = items.get();
-        let mut totals: HashMap<String, (String, u32)> = Default::default();
 
-        for food in tracked_foods.get() {
-            if let Some(recipe) = food.item.recipes.as_ref().and_then(|r| r.first()) {
-                for ing in &recipe.ingredients {
-                    let key   = ing.unique_name.clone();
-                    let count = ing.count  * food.quantity;
-                    let name  = registry.items.get(&key)
-                        .map(|it| it.name.clone())
-                        .unwrap_or_else(|| {
-                            logging::warn!("Missing key in registry: '{}'", key);
-                            key.clone()
-                        });
-                    let entry = totals.entry(key).or_insert((name, 0));
-                    entry.1 += count;
+        food_data.iter().for_each(|food_map| {
+            if let Some(item_data) = registry.items.get(&food_map.current_tracked) {
+
+                let recipe = item_data.recipes.as_ref()
+                    .and_then(|r| r.first());
+
+                if let Some(recipe) = recipe {
+                    recipe.ingredients.iter().for_each(|ingredient| {
+                        let total_qty = ingredient.count * 1;
+
+                        totals.entry(ingredient.unique_name.clone())
+                            .and_modify(|(_, count)| *count += total_qty)
+                            .or_insert_with(|| {
+                                let display_name = registry.items.get(&ingredient.unique_name)
+                                    .map(|i| i.name.clone())
+                                    .unwrap_or_else(|| ingredient.unique_name.clone());
+
+                                (display_name, total_qty)
+                            });
+                    });
                 }
             }
-        }
+        });
 
-        let mut result = totals.into_iter()
-            .map(|(id, (name, count))| AggregatedIngredient {
-                unique_name: id,
-                display_name: name,
-                total_count: count,
+        totals.into_iter()
+            .map(|(unique_name, (display_name, total_count))| AggregatedIngredient {
+                unique_name,
+                display_name,
+                total_count,
             })
-            .collect::<Vec<_>>();
-        result.sort_by(|a, b| a.display_name.cmp(&b.display_name));
-        result
+            .collect::<Vec<_>>()
     });
-
-    let price_of = move |key: &str| -> u32 {
-        prices.get().get(key).map(|p| p.current).unwrap_or(0)
-    };
-
-    let total_cost = move || {
-        aggregated_ingredients.get().iter().fold(0.0f64, |acc, ing| {
-            acc + price_of(&ing.unique_name) as f64 * ing.total_count as f64
-        })
-    };
 
     view! {
         <div class="panel panel-ingredients">
@@ -73,19 +64,25 @@ pub fn Ingredients() -> impl IntoView {
                 <div class="panel-title">"Ingredients"</div>
                 <span style="font-size:11px;color:var(--text4);margin-left:auto">
                     {move || {
-                        let tracked = tracked_foods.get().len();
-                        let types   = aggregated_ingredients.get().len();
-                        format!("{tracked} tracked · {types} types")
+                        let count = tracked_foods.get().len();
+                        if count == 0 {
+                            "No foods tracked".to_string()
+                        } else {
+                            format!("Aggregating {} items", count)
+                        }
                     }}
                 </span>
             </div>
             <div class="panel-body">
-                {move || tracked_foods.get().is_empty().then(|| view! {
-                    <div style="padding:24px 0;color:var(--text4);font-size:12px;text-align:center">
-                        "Add food to the tracker to see required ingredients."
-                    </div>
-                })}
-                <Show when=move || !tracked_foods.get().is_empty()>
+                {move || {
+                    tracked_foods.get().is_empty().then(|| view! {
+                        <div style="padding:24px 0;color:var(--text4);font-size:12px;text-align:center">
+                            "Add foods to your tracker to see total ingredients."
+                        </div>
+                    })
+                }}
+
+                <Show when=move || !aggregated_ingredients.get().is_empty()>
                     <div class="ing-grid">
                         <For
                             each=move || aggregated_ingredients.get()
@@ -93,31 +90,11 @@ pub fn Ingredients() -> impl IntoView {
                             let:ing
                         >
                             <IngredientCard
-                                unique_name=ing.unique_name.clone()
-                                display_name=ing.display_name.clone()
+                                unique_name=ing.unique_name
+                                display_name=ing.display_name
                                 total_count=ing.total_count
                             />
                         </For>
-                    </div>
-
-                    <div style="margin-top:12px;border-top:1px solid var(--border2);padding-top:10px;display:flex;flex-direction:column;gap:5px">
-                        <div class="analysis-row">
-                            <span class="analysis-row-label">"Total Ingredient Cost"</span>
-                            <span class="analysis-row-val gold">
-                                {move || fmt_silver(total_cost())}
-                            </span>
-                        </div>
-                        <div class="analysis-row">
-                            <span class="analysis-row-label">"Cost per craft unit"</span>
-                            <span class="analysis-row-val">
-                                {move || {
-                                    let qty = tracked_foods.get().iter()
-                                        .map(|f| f.quantity).sum::<u32>();
-                                    if qty > 0 { fmt_silver(total_cost() / qty as f64) }
-                                    else { "—".into() }
-                                }}
-                            </span>
-                        </div>
                     </div>
                 </Show>
             </div>
