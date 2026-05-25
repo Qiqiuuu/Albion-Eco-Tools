@@ -46,6 +46,22 @@ pub fn update_item_price(handle: tauri::AppHandle,state: State<'_, AppState>, un
 }
 
 #[tauri::command]
+pub fn update_item_demand(handle: tauri::AppHandle,state: State<'_, AppState>, unique_name: String, new_demand: u32)-> Result<(), String> {
+    {
+        {
+            let Ok(mut data) = state.prices.write()
+            else { return Err("RwLock is poisoned".to_string()) };
+            match data.get_mut(&unique_name) {
+                Some(prices) => {prices.demand = new_demand}
+                None => {}
+            }
+        }
+    }
+    save_prices(&handle,&state)
+}
+
+
+#[tauri::command]
 pub fn calculate_crafting(state: State<'_, AppState>, unique_name: &str, location: CraftingLocation,use_focus: bool,usage_fee: u32,is_premium: bool,amount: u32) -> Option<CraftingResult> {
     let prices = state.prices.read().unwrap();
     let user = state.user.lock().unwrap();

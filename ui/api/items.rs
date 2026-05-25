@@ -27,6 +27,14 @@ pub async fn send_item_price_update(unique_name: String,new_price: u32){
     invoke::<()>("update_item_price", &Args{unique_name,new_price}).await
 }
 
+pub async fn send_item_demand_update(unique_name: String,new_demand: u32){
+    #[derive(serde::Serialize)]
+    #[serde(rename_all = "camelCase")]
+    struct Args { unique_name: String ,
+        new_demand: u32}
+    invoke::<()>("update_item_demand", &Args{unique_name,new_demand}).await
+}
+
 
 pub async fn calculate_crafting(
     unique_name: &str,

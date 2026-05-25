@@ -1,7 +1,7 @@
 use leptos::prelude::{Get, ReadSignal, Set, WriteSignal};
 use leptos::task::spawn_local;
 use aet_shared::models::prices::PriceMap;
-use crate::api::items::{fetch_all_prices, send_item_price_update};
+use crate::api::items::{fetch_all_prices, send_item_demand_update, send_item_price_update};
 
 pub fn fmt_silver(val: f64) -> String {
     let abs = val.abs();
@@ -20,6 +20,14 @@ pub fn update_price(key: String, val: u32, set_prices: WriteSignal<PriceMap>) {
         send_item_price_update(key, val).await;
         let fresh = fetch_all_prices().await;
         set_prices.set(fresh);
+    });
+}
+
+pub fn update_demand(key: String, val: u32, set_demand: WriteSignal<PriceMap>) {
+    spawn_local(async move {
+        send_item_demand_update(key, val).await;
+        let fresh = fetch_all_prices().await;
+        set_demand.set(fresh);
     });
 }
 

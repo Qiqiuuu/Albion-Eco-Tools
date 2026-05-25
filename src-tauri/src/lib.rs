@@ -7,7 +7,7 @@ pub mod calculations;
 
 use std::sync::{Mutex, RwLock};
 use tauri::Manager;
-use crate::commands::items::{calculate_crafting, fetch_all_items, fetch_all_prices, fetch_item, update_item_price};
+use crate::commands::items::{calculate_crafting, fetch_all_items, fetch_all_prices, fetch_item, update_item_demand, update_item_price};
 use crate::commands::user::{get_player_data, get_tracked_foods,update_player_mastery, update_player_specs, update_active_tab, update_active_category, update_silver_fee, update_premium, update_focus, update_city, update_avg, add_tracked_food, remove_tracked_food};
 use crate::loader::{load_item_registry, load_prices, load_user};
 use crate::state::AppState;
@@ -35,6 +35,7 @@ pub fn run() {
             fetch_all_items,
             fetch_all_prices,
             calculate_crafting,
+            update_item_demand,
             update_focus,
             update_premium,
             update_silver_fee,

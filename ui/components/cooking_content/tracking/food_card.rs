@@ -6,7 +6,7 @@ use aet_shared::models::items::{Enchantment, ItemEntity, ItemRegistry, TrackedFo
 use aet_shared::models::prices::PriceMap;
 use aet_shared::models::user::UserData;
 use crate::api::items::calculate_crafting;
-use crate::utils::{fmt_silver, price_of, update_price};
+use crate::utils::{fmt_silver, price_of, update_demand, update_price};
 
 #[component]
 pub fn FoodCard(
@@ -168,12 +168,7 @@ pub fn FoodCard(
                         on:input=move |ev| {
                             let val = event_target_value(&ev).parse::<u32>().unwrap_or(0);
                             demand_signal.set(val);
-                            let id = active_item.get_untracked().unique_name;
-                            set_prices.update(|map| {
-                                if let Some(entry) = map.get_mut(&id) {
-                                    entry.demand = val;
-                                }
-                            });
+                            update_demand(active_item.get_untracked().unique_name, val, set_prices);
                         }
                     />
                 </div>
